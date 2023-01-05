@@ -4,8 +4,12 @@ import { FacebookLogo, GoogleLogo } from './svg'
 import SecondaryButton from './SecondaryButton'
 import PrimaryButton from './PrimaryButton'
 import { Variables } from '../styles/theme'
+import { CREATE_ACCOUNT } from '../navigations/routes'
+import { useNavigation } from '@react-navigation/native'
 
-const SignInContainer = ({ onSignInPress, onCreateAccountPress }) => {
+const SignInContainer = ({ onSignInPress }) => {
+    const navigation = useNavigation()
+
     return (
         <View>
             <PrimaryButton text={'Sign In'} onPress={onSignInPress} />
@@ -23,7 +27,13 @@ const SignInContainer = ({ onSignInPress, onCreateAccountPress }) => {
                     textStyle={{ marginLeft: 15 }}
                 />
             </View>
-            <Text style={styles.bottomText}>Join with us. <Text style={styles.createAccountText} onPress={onCreateAccountPress}>Create Account</Text></Text>
+            <Text style={styles.bottomText}>
+                Join with us.
+                <Text
+                    style={styles.createAccountText}
+                    onPress={() => navigation.navigate(CREATE_ACCOUNT)}
+                >Create Account</Text>
+            </Text>
         </View>
     )
 }
