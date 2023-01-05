@@ -1,4 +1,4 @@
-import { Animated, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Animated, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { Variables } from '../styles/theme'
 
