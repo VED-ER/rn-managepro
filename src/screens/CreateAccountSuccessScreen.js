@@ -6,7 +6,7 @@ import PrimaryButton from '../components/PrimaryButton'
 
 const CreateAccountSuccessScreen = () => {
     return (
-        <Screen style={{ justifyContent: 'space-between' }}>
+        <Screen withSafeArea style={{ justifyContent: 'space-between' }}>
             <Image
                 source={require('../assets/create-account-success.png')}
                 style={{ marginTop: 100 }}

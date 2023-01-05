@@ -10,7 +10,7 @@ const CreateAccountScreen = ({ navigation }) => {
     const [email, setEmail] = useState('')
 
     return (
-        <Screen>
+        <Screen withSafeArea>
             <ScrollView bounces={false} contentContainerStyle={{ flexGrow: 1 }} >
                 <View style={styles.container}>
                     <View>

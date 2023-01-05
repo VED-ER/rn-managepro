@@ -32,7 +32,7 @@ const SignInContainer = ({ onSignInPress }) => {
                 <Text
                     style={styles.createAccountText}
                     onPress={() => navigation.navigate(CREATE_ACCOUNT)}
-                >Create Account</Text>
+                > Create Account</Text>
             </Text>
         </View>
     )

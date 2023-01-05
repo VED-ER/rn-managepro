@@ -23,5 +23,6 @@ export const Variables = {
             dark900: '#04060F'
         },
         white: '#ffffff'
-    }
+    },
+    borderRadius: 15
 }

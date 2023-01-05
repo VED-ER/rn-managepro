@@ -28,7 +28,7 @@ const OnboardingScreen = ({navigation}) => {
     }
 
     return (
-        <Screen style={styles.screenStyle}>
+        <Screen withSafeArea style={styles.screenStyle}>
             <FlatList
                 data={onboardingSlides}
                 keyExtractor={(item) => item.id}

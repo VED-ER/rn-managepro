@@ -60,7 +60,7 @@ const InputPrimary = ({ value, onChangeText, placeholder, style, inputStyle, Ico
                 onBlur={handleOnBlur}
                 {...other}
             />
-            <Pressable style={[styles.iconRightStyle]} onPress={onIconRightPress}>
+            <Pressable style={({ pressed }) => ([styles.iconRightStyle, pressed && { opacity: 0.5 }])} onPress={onIconRightPress}>
                 {IconRight ? IconRight : null}
             </Pressable>
         </View>
