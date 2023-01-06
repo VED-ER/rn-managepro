@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text } from 'react-native'
 import React from 'react'
 import { Variables } from '../styles/theme'
 
@@ -18,7 +18,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 20,
         borderRadius: 100,
-        maxHeight: 60
     },
     text: {
         color: Variables.colors.white,

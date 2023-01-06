@@ -1,9 +1,10 @@
-import { Keyboard, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Keyboard, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import { Variables } from '../styles/theme'
 import { Add } from './svg'
 import BottomSheet from './BottomSheet'
 import InputPrimary from './InputPrimary'
+import PrimaryButton from './PrimaryButton'
 
 const CreateProjectModal = () => {
     const [showBottomSheet, setShowBottomSheet] = useState(false)
@@ -28,10 +29,11 @@ const CreateProjectModal = () => {
                 <Add width={34} height={34} />
             </Pressable>
             <BottomSheet contentContainerStyle={{}} onDismiss={onDismiss} isVisible={showBottomSheet}>
-                <ScrollView keyboardShouldPersistTaps="handled" style={styles.container}>
+                <ScrollView keyboardShouldPersistTaps="handled" style={[styles.container, Platform.OS === 'ios' ? { paddingBottom: 30 } : null]}>
                     <Text style={styles.title}>Create Project</Text>
                     <InputPrimary placeholder={'Project Name'} style={{ marginTop: 30 }} />
-                    <InputPrimary placeholder={'Project Description'} style={{ marginTop: 30 }} />
+                    <InputPrimary placeholder={'Project Description'} style={{ marginVertical: 30 }} />
+                    <PrimaryButton text={'Create Workspace'} />
                 </ScrollView>
             </BottomSheet>
         </>
