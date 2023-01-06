@@ -1,8 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { View } from "react-native";
 import Avatar from "../components/Avatar";
 import CreateProjectModal from "../components/CreateProjectModal";
 import Logo from "../components/Logo";
-import { Hometab, Message, Projectstab } from "../components/svg";
+import { Hometab, Message, Projectstab, Setting4 } from "../components/svg";
 import CreateProjectScreen from "../screens/CreateProjectScreen";
 import HomeScreen from "../screens/HomeScreen";
 import MessagesScreen from "../screens/MessagesScreen";
@@ -22,6 +23,9 @@ const TabNavigator = () => {
                 tabBarActiveTintColor: Variables.colors.brand.default,
                 tabBarInactiveTintColor: Variables.colors.black.light200,
                 tabBarShowLabel: false,
+                headerStyle: {
+                    height: 130
+                }
             }}>
             <Tab.Screen
                 name={HOME}
@@ -39,6 +43,14 @@ const TabNavigator = () => {
                 component={ProjectsScreen}
                 options={{
                     tabBarIcon: ({ color, size }) => (<Projectstab width={size} height={size} color={color} />),
+                    headerTitle: 'My Projects',
+                    headerTitleAlign: 'left',
+                    headerTitleStyle: {
+                        color: Variables.colors.black.dark900,
+                        fontSize: 18,
+                        // fontWeight: 'bold'
+                    },
+                    headerRight: () => (<View style={{ marginRight: 20 }}><Setting4 width={24} height={24} /></View>)
                 }}
             />
             <Tab.Screen

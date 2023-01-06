@@ -61,7 +61,7 @@ const todayTasksDemo = [
 const HomeScreen = () => {
     const [searchText, setSearchText] = useState('')
 
-    const renderRecentItem = ({ item }) => <ProjectCard project={item} />
+    const renderRecentItem = ({ item }) => <ProjectCard project={item} style={{ width: 315 }} />
 
     return (
         <ScrollView style={styles.screenStyle} contentContainerStyle={{ paddingBottom: 50 }} >
@@ -107,7 +107,7 @@ export default HomeScreen
 const styles = StyleSheet.create({
     screenStyle: {
         paddingLeft: 20,
-        paddingTop: 30,
+        paddingTop: 10,
         backgroundColor: Variables.colors.white
     },
     title: {

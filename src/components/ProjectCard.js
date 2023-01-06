@@ -4,10 +4,10 @@ import { Variables } from '../styles/theme'
 import { More } from './svg'
 import Avatar from './Avatar'
 
-const ProjectCard = ({ project }) => {
+const ProjectCard = ({ project, style }) => {
     return (
         // <View>
-        <Pressable style={({ pressed }) => ([styles.container, pressed && { opacity: 0.5 }])}>
+        <Pressable style={({ pressed }) => ([styles.container, style, pressed && { opacity: 0.5 }])}>
             <View style={[styles.upperContainer, project?.color && { backgroundColor: project.color }]}>
                 <View style={styles.projectIcon}>
                     <Text style={styles.projectIconText}>PP</Text>
@@ -60,7 +60,6 @@ export default ProjectCard
 const styles = StyleSheet.create({
     container: {
         height: 270,
-        width: 315,
         backgroundColor: 'lightblue',
         borderRadius: Variables.borderRadius,
         ...Variables.shadow
