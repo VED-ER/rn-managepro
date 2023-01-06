@@ -1,4 +1,4 @@
-import { Animated, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native'
+import { Animated, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { Variables } from '../styles/theme'
 
@@ -41,17 +41,9 @@ const InputPrimary = ({ value, onChangeText, placeholder, style, inputStyle, Ico
 
     return (
         <View style={[style]}>
-            <Animated.Text pointerEvents='none' style={{
-                position: 'absolute',
-                top: topAnim,
-                left: 21,
-                color: Variables.colors.black.light300,
-                backgroundColor: '#fff',
-                zIndex: 1,
-                paddingHorizontal: 5,
-                borderRadius: 10,
-
-            }}>{placeholder}</Animated.Text>
+            <Animated.View pointerEvents='none' style={[styles.placeholderContainer, { top: topAnim }]}>
+                <Text style={{ color: Variables.colors.black.light300 }}>{placeholder}</Text>
+            </Animated.View>
             <TextInput
                 style={[styles.input, inputStyle]}
                 value={value}
@@ -82,5 +74,14 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: 17,
         top: 17
+    },
+    placeholderContainer: {
+        position: 'absolute',
+        left: 21,
+        backgroundColor: '#fff',
+        zIndex: 1,
+        paddingHorizontal: 5,
+        borderRadius: 10,
+
     }
 })
