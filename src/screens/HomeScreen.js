@@ -1,6 +1,5 @@
 import { FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
-import Screen from '../components/Screen'
 import { Variables } from '../styles/theme'
 import InputPrimary from '../components/InputPrimary'
 import { Setting4 } from '../components/svg'
@@ -42,17 +41,20 @@ const todayTasksDemo = [
     {
         id: 1,
         name: 'Meeting Project',
-        time: 'Today, 8AM'
+        time: 'Today, 8AM',
+        completed: true
     },
     {
         id: 2,
         name: 'Client Brief',
-        time: 'Today, 2PM'
+        time: 'Today, 2PM',
+        completed: false
     },
     {
         id: 3,
         name: 'Create Wireframe',
-        time: 'Today, 8PM'
+        time: 'Today, 8PM',
+        completed: false
     },
 ]
 
@@ -76,12 +78,14 @@ const HomeScreen = () => {
             </View>
             <View style={styles.recentProjectsTextContainer}>
                 <Text style={styles.subtitle}>Recent Projects</Text>
-                <Pressable>
+                <Pressable style={({ pressed }) => (pressed && { opacity: 0.5 })}>
                     <Text style={styles.recentSeeAllText}>SEE ALL</Text>
                 </Pressable>
             </View>
             <FlatList
                 data={recentProjectsDemo}
+                style={{ marginLeft: -10 }}
+                contentContainerStyle={{ padding: 10 }}
                 renderItem={renderRecentItem}
                 keyExtractor={(item) => item.id}
                 ItemSeparatorComponent={() => <View style={{ padding: 10 }} />}
@@ -119,7 +123,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         marginTop: 5,
-        marginBottom: 20,
+        marginBottom: 10,
         paddingRight: 20
     },
     subtitle: {

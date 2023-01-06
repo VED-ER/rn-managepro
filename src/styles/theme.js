@@ -24,5 +24,16 @@ export const Variables = {
         },
         white: '#ffffff'
     },
-    borderRadius: 15
+    borderRadius: 15,
+    shadow: {
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4.84,
+
+        elevation: 5,
+    }
 }
