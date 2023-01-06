@@ -41,7 +41,7 @@ const InputPrimary = ({ value, onChangeText, placeholder, style, inputStyle, Ico
 
     return (
         <View style={[style]}>
-            <Animated.Text style={{
+            <Animated.Text pointerEvents='none' style={{
                 position: 'absolute',
                 top: topAnim,
                 left: 21,
