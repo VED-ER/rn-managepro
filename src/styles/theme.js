@@ -1,6 +1,7 @@
 export const Variables = {
     colors: {
         brand: {
+            light10: '#F6FAFD',
             light100: '#D3E7FE',
             light200: '#A7CCFE',
             light300: '#7BAFFE',

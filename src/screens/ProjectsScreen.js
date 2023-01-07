@@ -1,23 +1,54 @@
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
+import { FlatList, StyleSheet, View } from 'react-native'
 import React, { useState } from 'react'
 import Screen from '../components/Screen'
 import { Variables } from '../styles/theme'
-import PrimaryButton from '../components/PrimaryButton'
 import ProjectsTabSelector from '../components/ProjectsTabSelector'
 import ProjectCard from '../components/ProjectCard'
+import { PROJECT_DETAILS } from '../navigations/routes'
 
 const recentProjectsDemo = [
     {
         id: 1,
         name: 'Protergo Project',
-        description: 'This is projects description',
+        description: 'Mobile application for security device mobile & dekstop',
         createdAt: 'createdAt',
         createdBy: { name: 'Mario M' },
         dueDate: 'Tue, Jun 29',
         type: 'External Project',
-        tasks: 50,
-        tasksInProgress: 5,
-        tasksCompleted: 20,
+        tasks: [
+            {
+                id: 1,
+                name: 'Brainstorming',
+                createdAt: 'date',
+                dueDate: '13 Oct, 2023',
+                team: [{ name: 'John C' }, { name: 'Mario M' }],
+                comments: [
+                    {
+                        id: 1,
+                        author: { name: 'John C', id: 1 },
+                        comment: 'This is a comment for a projects task',
+                        createdAt: 'date that will be formated to something like x time ago'
+                    }
+                ]
+            },
+            {
+                id: 2,
+                name: 'Design Sprint #1',
+                createdAt: 'date',
+                dueDate: '25 Oct, 2023',
+                team: [{ name: 'Marco C' }, { name: 'Cena M' }],
+                comments: [
+                    {
+                        id: 1,
+                        author: { name: 'Mario M', id: 1 },
+                        comment: 'This is a comment for a projects task',
+                        createdAt: 'date that will be formated to something like x time ago'
+                    }
+                ]
+            }
+        ],
+        tasksInProgress: 1,
+        tasksCompleted: 1,
         team: [{ name: 'John Doe' }, { name: 'Test demo' }],
         color: Variables.colors.brand.dark800
     },
@@ -61,20 +92,24 @@ const recentProjectsDemo = [
         tasksInProgress: 5,
         tasksCompleted: 10,
         team: [{ name: 'John Doe' }, { name: 'Cena M' }],
-        color: Variables.colors.black.light400
+        color: Variables.colors.white
     },
 ]
 
-const ProjectsScreen = () => {
+const ProjectsScreen = ({ navigation }) => {
     const [activeTab, setActiveTab] = useState({ name: 'To Do' })
 
     const onTabPress = (tab) => {
         setActiveTab(tab)
     }
 
-    const renderProjectCard = ({ item }) => (<ProjectCard project={item} />)
+    const renderProjectCard = ({ item }) => (<ProjectCard project={item} onPress={onProjectCardPress.bind(this, item)} />)
 
     const keyExtractor = (item) => item.id
+
+    const onProjectCardPress = (project) => {
+        navigation.navigate(PROJECT_DETAILS, { project })
+    }
 
     return (
         <Screen style={{ padding: 0 }}>

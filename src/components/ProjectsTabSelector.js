@@ -12,16 +12,16 @@ const ProjectsTabSelector = ({ activeTab, onTabPress, style }) => {
             {PROJECTS_TABS.map((tab, index) => {
                 const isActive = activeTab?.name === tab.name
                 return (
-                    <>
+                    <React.Fragment key={index}>
                         <PrimaryButton
                             key={tab.name}
                             text={tab.name}
-                            style={[{ paddingVertical: 10 }, isActive ? { flex: 1 } : styles.tab]}
+                            style={[{ paddingVertical: 10, paddingHorizontal: 5 }, isActive ? { flex: 1 } : styles.tab]}
                             textStyle={isActive ? {} : styles.tabText}
                             onPress={() => onTabPress(tab)}
                         />
                         {index < PROJECTS_TABS.length - 1 ? <View style={{ width: 10 }} /> : null}
-                    </>
+                    </React.Fragment>
                 )
             })}
         </View>
@@ -39,6 +39,6 @@ const styles = StyleSheet.create({
         flex: 1
     },
     tabText: {
-        color: Variables.colors.black.dark900
+        color: Variables.colors.black.dark900,
     }
 })

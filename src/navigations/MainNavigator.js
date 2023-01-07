@@ -1,12 +1,14 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import BackButton from "../components/header/BackButton";
+import ProjectDetailsHeaderRight from "../components/header/ProjectDetailsHeaderRight";
 import CreateAccountScreen from "../screens/CreateAccountScreen";
 import CreateAccountSuccessScreen from "../screens/CreateAccountSuccessScreen"
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import LoginScreen from "../screens/LoginScreen";
 import OnboardingScreen from "../screens/OnboardingScreen";
-import { CREATE_ACCOUNT, CREATE_ACCOUNT_SUCCESS, FORGOT_PASSWORD, LOGIN, MAIN, ONBOARDING } from "./routes";
+import ProjectDetailsScreen from "../screens/ProjectDetailsScreen";
+import { CREATE_ACCOUNT, CREATE_ACCOUNT_SUCCESS, FORGOT_PASSWORD, LOGIN, MAIN, ONBOARDING, PROJECT_DETAILS } from "./routes";
 import TabNavigator from "./TabNavigator";
 
 const Stack = createNativeStackNavigator()
@@ -30,13 +32,20 @@ const MainNavigator = () => {
             <Stack.Navigator screenOptions={{
                 headerLeft: () => <BackButton />,
                 headerShadowVisible: false,
-                title: ''
+                title: '',
             }}>
                 <Stack.Screen
                     name="test"
                     component={TabNavigator}
                     options={{
                         headerShown: false
+                    }}
+                />
+                <Stack.Screen
+                    name={PROJECT_DETAILS}
+                    component={ProjectDetailsScreen}
+                    options={{
+                        headerRight: () => <ProjectDetailsHeaderRight />
                     }}
                 />
                 {/* <Stack.Screen

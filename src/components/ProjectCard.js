@@ -4,10 +4,12 @@ import { Variables } from '../styles/theme'
 import { More } from './svg'
 import Avatar from './Avatar'
 
-const ProjectCard = ({ project, style }) => {
+const ProjectCard = ({ project, style, onPress }) => {
     return (
-        // <View>
-        <Pressable style={({ pressed }) => ([styles.container, style, pressed && { opacity: 0.5 }])}>
+        <Pressable
+            onPress={onPress}
+            style={({ pressed }) => ([styles.container, style, pressed && { opacity: 0.5 }])}
+        >
             <View style={[styles.upperContainer, project?.color && { backgroundColor: project.color }]}>
                 <View style={styles.projectIcon}>
                     <Text style={styles.projectIconText}>PP</Text>
@@ -42,7 +44,7 @@ const ProjectCard = ({ project, style }) => {
                 </View>
                 <View>
                     <View style={styles.tasksTextContainer}>
-                        <Text style={styles.tasksCompletedText}>{project?.tasksCompleted} / <Text style={styles.tasksLeftText} >{project?.tasks}</Text></Text>
+                        <Text style={styles.tasksCompletedText}>{project?.tasksCompleted} / <Text style={styles.tasksLeftText} >{project?.tasks.length}</Text></Text>
                         <Text style={styles.tasksLeftText}>7 days left</Text>
                     </View>
                     <View style={styles.progressBar}>
@@ -51,7 +53,6 @@ const ProjectCard = ({ project, style }) => {
                 </View>
             </View>
         </Pressable>
-        // </View>
     )
 }
 
