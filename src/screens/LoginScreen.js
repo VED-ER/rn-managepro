@@ -1,12 +1,13 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import React, { useContext, useState } from 'react'
 import Screen from '../components/Screen'
 import { Variables } from '../styles/theme'
 import { Eye, EyeSlash } from '../components/svg'
 import InputPrimary from '../components/InputPrimary'
 import Checkbox from '../components/Checkbox'
 import SignInContainer from '../components/SignInContainer'
-import { FORGOT_PASSWORD } from '../navigations/routes'
+import { FORGOT_PASSWORD, MAIN } from '../navigations/routes'
+import { AuthContext } from '../store/AuthContext'
 
 const LoginScreen = ({ navigation }) => {
     const [email, setEmail] = useState('')
@@ -14,12 +15,23 @@ const LoginScreen = ({ navigation }) => {
     const [secureTextEntry, setSecureTextEntry] = useState(true)
     const [rememberMe, setRememberMe] = useState(false)
 
+    const { logIn } = useContext(AuthContext)
+
     const onIconRightPress = () => {
         setSecureTextEntry(!secureTextEntry)
     }
 
     const onCheckboxPress = () => {
         setRememberMe(!rememberMe)
+    }
+
+    const onSignInPress = async () => {
+        try {
+            await logIn(email, password)
+            navigation.navigate(MAIN)
+        } catch (error) {
+            Alert.alert(error.message)
+        }
     }
 
     return (
@@ -55,7 +67,7 @@ const LoginScreen = ({ navigation }) => {
                             </Pressable>
                         </View>
                     </View>
-                    <SignInContainer />
+                    <SignInContainer onSignInPress={onSignInPress} />
                 </View>
             </ScrollView>
         </Screen>

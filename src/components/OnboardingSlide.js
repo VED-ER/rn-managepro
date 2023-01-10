@@ -10,6 +10,7 @@ const OnboardingSlide = ({ image, title }) => {
             <Image
                 source={image}
                 style={styles.imageStyle}
+                resizeMode={'contain'}
             />
             <Text style={styles.title}>{title}</Text>
         </View>
@@ -30,6 +31,7 @@ const styles = StyleSheet.create({
         color: Variables.colors.black.dark900
     },
     imageStyle: {
-        alignSelf: 'center'
+        alignSelf: 'center',
+        flex:1
     }
 })

@@ -26,7 +26,7 @@ const CreateProjectModal = () => {
                 ...Variables.shadow,
                 marginTop: -15
             }}>
-                <Add width={34} height={34} />
+                <Add width={34} height={34} color={Variables.colors.white} />
             </Pressable>
             <BottomSheet contentContainerStyle={{}} onDismiss={onDismiss} isVisible={showBottomSheet}>
                 <ScrollView keyboardShouldPersistTaps="handled" style={[styles.container, Platform.OS === 'ios' ? { paddingBottom: 30 } : null]}>

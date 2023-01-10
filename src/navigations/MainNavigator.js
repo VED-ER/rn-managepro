@@ -1,5 +1,7 @@
+import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
+import { useContext, useEffect, useState } from "react";
 import BackButton from "../components/header/BackButton";
 import ProjectDetailsHeaderRight from "../components/header/ProjectDetailsHeaderRight";
 import CreateAccountScreen from "../screens/CreateAccountScreen";
@@ -8,24 +10,60 @@ import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import LoginScreen from "../screens/LoginScreen";
 import OnboardingScreen from "../screens/OnboardingScreen";
 import ProjectDetailsScreen from "../screens/ProjectDetailsScreen";
-import { CREATE_ACCOUNT, CREATE_ACCOUNT_SUCCESS, FORGOT_PASSWORD, LOGIN, MAIN, ONBOARDING, PROJECT_DETAILS } from "./routes";
+import { AuthContext } from "../store/AuthContext";
+import { CREATE_ACCOUNT, CREATE_ACCOUNT_SUCCESS, FORGOT_PASSWORD, LOGIN, MAIN, ONBOARDING, PROJECT_DETAILS, TAB } from "./routes";
 import TabNavigator from "./TabNavigator";
+import * as SplashScreen from 'expo-splash-screen';
 
 const Stack = createNativeStackNavigator()
 
 
 const AppNavigator = () => {
     return (
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={{
+            headerLeft: () => <BackButton />,
+            headerShadowVisible: false,
+            title: '',
+        }}>
             <Stack.Screen
-                name={MAIN}
+                name={TAB}
                 component={TabNavigator}
+                options={{
+                    headerShown: false
+                }}
+            />
+            <Stack.Screen
+                name={PROJECT_DETAILS}
+                component={ProjectDetailsScreen}
+                options={{
+                    headerRight: () => <ProjectDetailsHeaderRight />
+                }}
             />
         </Stack.Navigator>
     )
 }
 
 const MainNavigator = () => {
+    const [inited, setInited] = useState(false)
+    const { currentUser, loading } = useContext(AuthContext)
+
+    const navigation = useNavigation()
+
+    useEffect(() => {
+        if (!loading) {
+            console.log('User logged in');
+            setTimeout(() => {
+                // simulating loading
+                setInited(true)
+                if (currentUser) {
+                    navigation.reset({ index: 0, routes: [{ name: MAIN }] })
+                    console.log('CAS ', currentUser);
+                }
+                SplashScreen.hideAsync()
+            }, 500)
+        }
+    }, [loading])
+
     return (
         <>
             <StatusBar style="auto" />
@@ -35,20 +73,6 @@ const MainNavigator = () => {
                 title: '',
             }}>
                 <Stack.Screen
-                    name="test"
-                    component={TabNavigator}
-                    options={{
-                        headerShown: false
-                    }}
-                />
-                <Stack.Screen
-                    name={PROJECT_DETAILS}
-                    component={ProjectDetailsScreen}
-                    options={{
-                        headerRight: () => <ProjectDetailsHeaderRight />
-                    }}
-                />
-                {/* <Stack.Screen
                     name={ONBOARDING}
                     component={OnboardingScreen}
                     options={{
@@ -73,7 +97,15 @@ const MainNavigator = () => {
                 <Stack.Screen
                     name={FORGOT_PASSWORD}
                     component={ForgotPasswordScreen}
-                /> */}
+                />
+                <Stack.Screen
+                    name={MAIN}
+                    component={AppNavigator}
+                    options={{
+                        headerShown: false,
+                        animation: 'none'
+                    }}
+                />
             </Stack.Navigator>
         </>
     )

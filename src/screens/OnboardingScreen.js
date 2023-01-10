@@ -28,7 +28,7 @@ const OnboardingScreen = ({navigation}) => {
     }
 
     return (
-        <Screen withSafeArea style={styles.screenStyle}>
+        <Screen style={styles.screenStyle}>
             <FlatList
                 data={onboardingSlides}
                 keyExtractor={(item) => item.id}
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20
     },
     screenStyle: {
-        paddingTop: 100,
+        paddingTop: 50,
         paddingHorizontal: 0,
     }
 })

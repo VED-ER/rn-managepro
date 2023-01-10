@@ -64,7 +64,7 @@ const HomeScreen = () => {
     const renderRecentItem = ({ item }) => <ProjectCard project={item} style={{ width: 315 }} />
 
     return (
-        <ScrollView style={styles.screenStyle} contentContainerStyle={{ paddingBottom: 50 }} >
+        <ScrollView style={styles.screenStyle} contentContainerStyle={{ paddingBottom: 50, flexGrow:1 }} >
             <View style={{ paddingRight: 20 }}>
                 <Text style={styles.title}>Hello,</Text>
                 <Text style={styles.title}>Pristia Candra</Text>
@@ -106,6 +106,7 @@ export default HomeScreen
 
 const styles = StyleSheet.create({
     screenStyle: {
+        flex:1,
         paddingLeft: 20,
         paddingTop: 10,
         backgroundColor: Variables.colors.white
