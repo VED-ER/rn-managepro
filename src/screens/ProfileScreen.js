@@ -7,10 +7,10 @@ import PrimaryButton from '../components/PrimaryButton'
 import { Logout, Notification, ProfileCircle, Proplan } from '../components/svg'
 import SettingsListItem from '../components/SettingsListItem'
 import { AuthContext } from '../store/AuthContext'
-import { LOGIN, ONBOARDING } from '../navigations/routes'
+import { ACCOUNT_DETAILS, LOGIN, ONBOARDING } from '../navigations/routes'
 
 const ProfileScreen = ({ navigation }) => {
-    const { logOut } = useContext(AuthContext)
+    const { logOut, avatarUrl } = useContext(AuthContext)
 
     const handleLogOut = async () => {
         try {
@@ -31,7 +31,7 @@ const ProfileScreen = ({ navigation }) => {
 
     return (
         <Screen>
-            <Avatar style={styles.avatarStyle} textStyle={styles.avatarText} />
+            <Avatar style={styles.avatarStyle} textStyle={styles.avatarText} imageUri={avatarUrl}/>
             <Text style={styles.title}>Pristia Candra</Text>
             <Text style={styles.roleText}>Free member</Text>
             <PrimaryButton
@@ -44,7 +44,8 @@ const ProfileScreen = ({ navigation }) => {
                 data={[
                     {
                         name: 'Account Details',
-                        RightComponent: <ProfileCircle width={24} height={24} color={Variables.colors.black.light400} />
+                        RightComponent: <ProfileCircle width={24} height={24} color={Variables.colors.black.light400} />,
+                        onPress: () => navigation.navigate(ACCOUNT_DETAILS)
                     },
                     {
                         name: 'Notifications',

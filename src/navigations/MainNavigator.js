@@ -11,9 +11,10 @@ import LoginScreen from "../screens/LoginScreen";
 import OnboardingScreen from "../screens/OnboardingScreen";
 import ProjectDetailsScreen from "../screens/ProjectDetailsScreen";
 import { AuthContext } from "../store/AuthContext";
-import { CREATE_ACCOUNT, CREATE_ACCOUNT_SUCCESS, FORGOT_PASSWORD, LOGIN, MAIN, ONBOARDING, PROJECT_DETAILS, TAB } from "./routes";
+import { ACCOUNT_DETAILS, CREATE_ACCOUNT, CREATE_ACCOUNT_SUCCESS, FORGOT_PASSWORD, LOGIN, MAIN, ONBOARDING, PROJECT_DETAILS, TAB } from "./routes";
 import TabNavigator from "./TabNavigator";
 import * as SplashScreen from 'expo-splash-screen';
+import AccountDetailsScreen from "../screens/AccountDetailsScreen";
 
 const Stack = createNativeStackNavigator()
 
@@ -39,6 +40,10 @@ const AppNavigator = () => {
                     headerRight: () => <ProjectDetailsHeaderRight />
                 }}
             />
+            <Stack.Screen 
+                name={ACCOUNT_DETAILS}
+                component={AccountDetailsScreen}
+            />
         </Stack.Navigator>
     )
 }
@@ -51,13 +56,12 @@ const MainNavigator = () => {
 
     useEffect(() => {
         if (!loading) {
-            console.log('User logged in');
             setTimeout(() => {
                 // simulating loading
                 setInited(true)
                 if (currentUser) {
                     navigation.reset({ index: 0, routes: [{ name: MAIN }] })
-                    console.log('CAS ', currentUser);
+                    // console.log('CAS ', currentUser);
                 }
                 SplashScreen.hideAsync()
             }, 500)

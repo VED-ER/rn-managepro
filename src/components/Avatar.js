@@ -1,11 +1,21 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Variables } from '../styles/theme'
 
-const Avatar = ({ style, textStyle }) => {
+const Avatar = ({ style, textStyle, imageUri }) => {
     return (
         <View style={[styles.container, style]}>
-            <Text style={textStyle}>VE</Text>
+            {
+                imageUri
+                    ?
+                    <Image
+                        source={{ uri: imageUri }}
+                        style={styles.image}
+                        resizeMode={'contain'}
+                    />
+                    :
+                    <Text style={textStyle}>VE</Text>
+            }
         </View>
     )
 }
@@ -20,5 +30,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: Variables.colors.black.light100
+    },
+    image: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 40
     }
 })
