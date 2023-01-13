@@ -2,7 +2,7 @@ import { Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Variables } from '../styles/theme'
 
-const Avatar = ({ style, textStyle, imageUri }) => {
+const Avatar = ({ style, textStyle, imageUri, imageStyle }) => {
     return (
         <View style={[styles.container, style]}>
             {
@@ -10,7 +10,7 @@ const Avatar = ({ style, textStyle, imageUri }) => {
                     ?
                     <Image
                         source={{ uri: imageUri }}
-                        style={styles.image}
+                        style={[styles.image, imageStyle]}
                         resizeMode={'contain'}
                     />
                     :

@@ -65,7 +65,7 @@ const HomeScreen = () => {
 
     return (
         <ScrollView style={styles.screenStyle} contentContainerStyle={{ paddingBottom: 50, flexGrow:1 }} >
-            <View style={{ paddingRight: 20 }}>
+            <View style={{ paddingHorizontal: 20 }}>
                 <Text style={styles.title}>Hello,</Text>
                 <Text style={styles.title}>Pristia Candra</Text>
                 <InputPrimary
@@ -84,15 +84,15 @@ const HomeScreen = () => {
             </View>
             <FlatList
                 data={recentProjectsDemo}
-                style={{ marginLeft: -10 }}
-                contentContainerStyle={{ padding: 10 }}
+                style={{ marginLeft: -10, paddingLeft:20 }}
+                contentContainerStyle={{ padding: 10, paddingRight:40 }}
                 renderItem={renderRecentItem}
                 keyExtractor={(item) => item.id}
                 ItemSeparatorComponent={() => <View style={{ padding: 10 }} />}
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
             />
-            <View style={{ paddingRight: 20 }}>
+            <View style={{ paddingHorizontal: 20 }}>
                 <View style={{ marginTop: 30 }}>
                     <Text style={styles.subtitle}>Tasks for Today</Text>
                     {todayTasksDemo.map((item) => <TodayTaskCard key={item.id} task={item} />)}
@@ -107,7 +107,7 @@ export default HomeScreen
 const styles = StyleSheet.create({
     screenStyle: {
         flex:1,
-        paddingLeft: 20,
+        // paddingLeft: 20,
         paddingTop: 10,
         backgroundColor: Variables.colors.white
     },
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginTop: 5,
         marginBottom: 10,
-        paddingRight: 20
+        paddingHorizontal: 20
     },
     subtitle: {
         fontSize: 18,

@@ -14,7 +14,7 @@ const InputPrimary = ({ value, onChangeText, placeholder, style, inputStyle, Ico
     }
 
     useEffect(() => {
-        if (isFocused) {
+        if (isFocused || value) {
             increaseHeight()
         } else if (!value) {
             decreaseHeight()

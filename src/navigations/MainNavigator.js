@@ -52,6 +52,11 @@ const AppNavigator = ({ navigation }) => {
             <Stack.Screen
                 name={ACCOUNT_DETAILS}
                 component={AccountDetailsScreen}
+                options={{
+                    title: 'Account Details',
+                    headerTitleAlign: 'center',
+                    // headerRight: ()=> //pencil
+                }}
             />
         </Stack.Navigator>
     );
