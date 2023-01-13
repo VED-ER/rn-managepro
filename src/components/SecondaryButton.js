@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        maxHeight: 60,
+        // maxHeight: 60,
         flex: 1
     },
     text: {

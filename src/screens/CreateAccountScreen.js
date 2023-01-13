@@ -1,28 +1,39 @@
-import { Alert, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useContext, useEffect, useRef, useState } from 'react'
-import Screen from '../components/Screen'
-import { Variables } from '../styles/theme'
-import InputPrimary from '../components/InputPrimary'
-import PrimaryButton from '../components/PrimaryButton'
-import { CREATE_ACCOUNT_SUCCESS } from '../navigations/routes'
-import { AuthContext } from '../store/AuthContext'
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import Screen from '../components/Screen';
+import { Variables } from '../styles/theme';
+import InputPrimary from '../components/InputPrimary';
+import PrimaryButton from '../components/PrimaryButton';
+import { CREATE_ACCOUNT_SUCCESS } from '../navigations/routes';
+import { AuthContext } from '../store/AuthContext';
 
 const CreateAccountScreen = ({ navigation }) => {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [username, setUsername] = useState('');
 
-    const { signUp, currentUser } = useContext(AuthContext)
+    const { signUp, currentUser } = useContext(AuthContext);
 
     const handleCreateAccountPress = async () => {
-        try {
-            await signUp(email, password)
-            navigation.navigate(CREATE_ACCOUNT_SUCCESS)
-            
-        } catch (error) {
-            Alert.alert(error.message)
+
+        if (!username) {
+            Alert.alert('Username error', 'Please enter a username you want to use');
+            return;
         }
-    }
+
+        if (username.length < 5) {
+            Alert.alert('Username error', 'Username length must be at least 6 characters');
+            return;
+        }
+
+        try {
+            await signUp(email, password);
+            navigation.navigate(CREATE_ACCOUNT_SUCCESS);
+
+        } catch (error) {
+            Alert.alert(error.message);
+        }
+    };
 
     return (
         <KeyboardAvoidingView
@@ -59,16 +70,17 @@ const CreateAccountScreen = ({ navigation }) => {
                             placeholder={'Password'}
                             value={password}
                             onChangeText={setPassword}
+                            secureTextEntry={true}
                         />
                     </View>
                     <PrimaryButton style={{ marginTop: 20 }} text={'Next'} onPress={handleCreateAccountPress} />
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>
-    )
-}
+    );
+};
 
-export default CreateAccountScreen
+export default CreateAccountScreen;
 
 const styles = StyleSheet.create({
     container: {
@@ -101,4 +113,4 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center'
     }
-})
+});
