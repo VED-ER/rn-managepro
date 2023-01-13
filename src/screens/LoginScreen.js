@@ -28,7 +28,7 @@ const LoginScreen = ({ navigation }) => {
     const onSignInPress = async () => {
         try {
             await logIn(email, password)
-            navigation.navigate(MAIN)
+            navigation.reset({ index: 0, routes: [{ name: MAIN }] });
         } catch (error) {
             Alert.alert(error.message)
         }

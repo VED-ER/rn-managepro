@@ -1,10 +1,16 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import Screen from '../components/Screen'
-import { Variables } from '../styles/theme'
-import PrimaryButton from '../components/PrimaryButton'
+import { Image, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import Screen from '../components/Screen';
+import { Variables } from '../styles/theme';
+import PrimaryButton from '../components/PrimaryButton';
+import { MAIN } from '../navigations/routes';
 
-const CreateAccountSuccessScreen = () => {
+const CreateAccountSuccessScreen = ({ navigation }) => {
+
+    const onBtnPress = () => {
+        navigation.reset({ index: 0, routes: [{ name: MAIN }] });
+    };
+
     return (
         <Screen withSafeArea style={{ justifyContent: 'space-between' }}>
             <Image
@@ -15,12 +21,12 @@ const CreateAccountSuccessScreen = () => {
                 <Text style={styles.subtitle}>Create Account Success</Text>
                 <Text style={styles.title}>Let's Manage Your Task!</Text>
             </View>
-            <PrimaryButton text={'Create Workspace'} />
+            <PrimaryButton text={'Create Workspace'} onPress={onBtnPress} />
         </Screen>
-    )
-}
+    );
+};
 
-export default CreateAccountSuccessScreen
+export default CreateAccountSuccessScreen;
 
 const styles = StyleSheet.create({
     title: {
@@ -35,4 +41,4 @@ const styles = StyleSheet.create({
         color: Variables.colors.black.light300,
         fontWeight: 'bold'
     },
-})
+});

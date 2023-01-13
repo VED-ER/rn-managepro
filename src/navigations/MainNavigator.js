@@ -1,11 +1,11 @@
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import BackButton from "../components/header/BackButton";
 import ProjectDetailsHeaderRight from "../components/header/ProjectDetailsHeaderRight";
 import CreateAccountScreen from "../screens/CreateAccountScreen";
-import CreateAccountSuccessScreen from "../screens/CreateAccountSuccessScreen"
+import CreateAccountSuccessScreen from "../screens/CreateAccountSuccessScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import LoginScreen from "../screens/LoginScreen";
 import OnboardingScreen from "../screens/OnboardingScreen";
@@ -16,10 +16,19 @@ import TabNavigator from "./TabNavigator";
 import * as SplashScreen from 'expo-splash-screen';
 import AccountDetailsScreen from "../screens/AccountDetailsScreen";
 
-const Stack = createNativeStackNavigator()
+const Stack = createNativeStackNavigator();
 
+const AppNavigator = ({ navigation }) => {
 
-const AppNavigator = () => {
+    useFocusEffect(useCallback(() => {
+        console.log('In TRANSITION END USE EFFECT');
+        const unsubscribe = navigation.addListener('transitionEnd', (e) => {
+            SplashScreen.hideAsync();
+        });
+
+        return unsubscribe;
+    }, []));
+
     return (
         <Stack.Navigator screenOptions={{
             headerLeft: () => <BackButton />,
@@ -40,33 +49,33 @@ const AppNavigator = () => {
                     headerRight: () => <ProjectDetailsHeaderRight />
                 }}
             />
-            <Stack.Screen 
+            <Stack.Screen
                 name={ACCOUNT_DETAILS}
                 component={AccountDetailsScreen}
             />
         </Stack.Navigator>
-    )
-}
+    );
+};
 
 const MainNavigator = () => {
-    const [inited, setInited] = useState(false)
-    const { currentUser, loading } = useContext(AuthContext)
+    const [inited, setInited] = useState(false);
+    const { currentUser, loading } = useContext(AuthContext);
 
-    const navigation = useNavigation()
+    const navigation = useNavigation();
 
     useEffect(() => {
         if (!loading) {
             setTimeout(() => {
                 // simulating loading
-                setInited(true)
+                setInited(true);
                 if (currentUser) {
-                    navigation.reset({ index: 0, routes: [{ name: MAIN }] })
+                    navigation.reset({ index: 0, routes: [{ name: MAIN }] });
                     // console.log('CAS ', currentUser);
                 }
-                SplashScreen.hideAsync()
-            }, 500)
+                // SplashScreen.hideAsync();
+            }, 500);
         }
-    }, [loading])
+    }, [loading]);
 
     return (
         <>
@@ -107,12 +116,12 @@ const MainNavigator = () => {
                     component={AppNavigator}
                     options={{
                         headerShown: false,
-                        animation: 'none'
+                        // animation: 'none'
                     }}
                 />
             </Stack.Navigator>
         </>
-    )
-}
+    );
+};
 
-export default MainNavigator
+export default MainNavigator;
