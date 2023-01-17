@@ -8,6 +8,7 @@ import Checkbox from '../components/Checkbox'
 import SignInContainer from '../components/SignInContainer'
 import { FORGOT_PASSWORD, MAIN } from '../navigations/routes'
 import { AuthContext } from '../store/AuthContext'
+import downloadImage from '../utils/downloadImage'
 
 const LoginScreen = ({ navigation }) => {
     const [email, setEmail] = useState('')
@@ -27,7 +28,9 @@ const LoginScreen = ({ navigation }) => {
 
     const onSignInPress = async () => {
         try {
-            await logIn(email, password)
+            const user = await logIn(email, password)
+            await downloadImage(user.user?.photoURL)
+
             navigation.reset({ index: 0, routes: [{ name: MAIN }] });
         } catch (error) {
             Alert.alert(error.message)

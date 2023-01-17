@@ -1,4 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useContext } from "react";
 import { View } from "react-native";
 import Avatar from "../components/Avatar";
 import CreateProjectModal from "../components/CreateProjectModal";
@@ -9,12 +10,15 @@ import HomeScreen from "../screens/HomeScreen";
 import MessagesScreen from "../screens/MessagesScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import ProjectsScreen from "../screens/ProjectsScreen";
+import { AuthContext } from "../store/AuthContext";
 import { Variables } from "../styles/theme";
 import { CREATE_PROJECT, HOME, MESSAGE, PROFILE, PROJECTS } from "./routes";
 
 const Tab = createBottomTabNavigator()
 
 const TabNavigator = () => {
+    const { avatarUrl } = useContext(AuthContext)
+
     return (
         <Tab.Navigator
             screenOptions={{
@@ -72,7 +76,7 @@ const TabNavigator = () => {
                 component={ProfileScreen}
                 options={{
                     tabBarIcon: ({ color, focused }) => (
-                        <Avatar style={{ width: 30, height: 30, borderColor: color, borderWidth: focused ? 2 : 0 }} />
+                        <Avatar imageUri={avatarUrl} style={{ width: 30, height: 30, borderColor: color, borderWidth: focused ? 2 : 0 }} />
                     ),
                 }}
             />
