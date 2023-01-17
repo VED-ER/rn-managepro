@@ -11,7 +11,7 @@ const Avatar = ({ style, textStyle, imageUri, imageStyle }) => {
                     <Image
                         source={{ uri: imageUri }}
                         style={[styles.image, imageStyle]}
-                        resizeMode={'contain'}
+                        resizeMode={'cover'}
                     />
                     :
                     <Text style={textStyle}>VE</Text>

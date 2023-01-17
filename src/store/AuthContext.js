@@ -16,7 +16,7 @@ export const AuthContextProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState()
     const [avatarUrl, setAvatarUrl] = useState('')
     const [loading, setLoading] = useState(true)
-    console.log(avatarUrl);
+
     const signUp = (email, password) => {
         return createUserWithEmailAndPassword(auth, email, password)
     }
@@ -29,23 +29,14 @@ export const AuthContextProvider = ({ children }) => {
         return signOut(auth)
     }
 
-    // console.log('ACONTEXT ', currentUser);
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             setCurrentUser(user)
-            setAvatarUrl(user?.photoURL)
             setLoading(false)
         })
 
         return unsubscribe
     }, [])
-
-    // useEffect(() => {
-    //     if (currentUser?.photoURL){
-    //         console.log('setting user photo url');
-    //         setAvatarUrl(currentUser.photoURL)
-    //     }
-    // }, [currentUser])
 
     const value = {
         currentUser,

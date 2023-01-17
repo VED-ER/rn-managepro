@@ -15,6 +15,8 @@ import { ACCOUNT_DETAILS, CREATE_ACCOUNT, CREATE_ACCOUNT_SUCCESS, FORGOT_PASSWOR
 import TabNavigator from "./TabNavigator";
 import * as SplashScreen from 'expo-splash-screen';
 import AccountDetailsScreen from "../screens/AccountDetailsScreen";
+import downloadImage from "../utils/downloadImage";
+import { Alert } from "react-native";
 
 const Stack = createNativeStackNavigator();
 
@@ -63,22 +65,29 @@ const AppNavigator = ({ navigation }) => {
 };
 
 const MainNavigator = () => {
-    const [inited, setInited] = useState(false);
-    const { currentUser, loading } = useContext(AuthContext);
+    const { currentUser, loading, setAvatarUrl } = useContext(AuthContext);
 
     const navigation = useNavigation();
 
     useEffect(() => {
-        if (!loading) {
-            setTimeout(() => {
-                // simulating loading
-                setInited(true);
-                if (currentUser) {
+        const initializeApp = async () => {
+            if (currentUser) {
+                try {
+                    const img = await downloadImage(currentUser?.photoURL)
+                    setAvatarUrl(img)
+
                     navigation.reset({ index: 0, routes: [{ name: MAIN }] });
-                    // console.log('CAS ', currentUser);
+                } catch (error) {
+                    Alert.alert(error.message)
                 }
-                // SplashScreen.hideAsync();
-            }, 500);
+            } else {
+                SplashScreen.hideAsync()
+            }
+
+        }
+
+        if (!loading) {
+            initializeApp()
         }
     }, [loading]);
 
