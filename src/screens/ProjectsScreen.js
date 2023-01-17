@@ -112,7 +112,7 @@ const ProjectsScreen = ({ navigation }) => {
     }
 
     return (
-        <Screen style={{ padding: 0 }}>
+        <Screen style={{ paddingVertical: 0, paddingHorizontal: 0 }}>
             <ProjectsTabSelector activeTab={activeTab} onTabPress={onTabPress} style={{ padding: 20 }} />
             <FlatList
                 data={recentProjectsDemo}

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Variables } from '../styles/theme'
 import Avatar from '../components/Avatar'
 import ProjectDetailStage from '../components/ProjectDetailStage'
+import Screen from '../components/Screen'
 
 const PROJECT_DETAILS_STAGES = [{ name: 'To Do' }, { name: 'In Progress' }, { name: 'Completed' }]
 
@@ -18,7 +19,7 @@ const ProjectDetailsScreen = ({ route }) => {
     const renderProjectDetailStage = ({ item }) => (<ProjectDetailStage projectTasks={project?.tasks} stage={item} />)
 
     return (
-        <View style={{ flex: 1, paddingTop: 10, backgroundColor: Variables.colors.white }}>
+        <Screen style={{ paddingHorizontal: 0, paddingVertical: 10 }}>
             <View style={[styles.topImageContainer, { backgroundColor: project?.color }]}>
                 <View style={styles.projectIcon}>
                     <Text style={styles.projectIconText}>PP</Text>
@@ -55,7 +56,7 @@ const ProjectDetailsScreen = ({ route }) => {
                     contentContainerStyle={{ padding: 10 }}
                 />
             </View>
-        </View>
+        </Screen>
     )
 }
 

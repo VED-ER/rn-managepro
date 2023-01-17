@@ -30,8 +30,8 @@ const ProfileScreen = ({ navigation }) => {
     )
 
     return (
-        <Screen>
-            <Avatar style={styles.avatarStyle} textStyle={styles.avatarText} imageUri={avatarUrl}/>
+        <Screen style={{ paddingVertical: 20}}>
+            <Avatar style={styles.avatarStyle} textStyle={styles.avatarText} imageUri={avatarUrl} />
             <Text style={styles.title}>Pristia Candra</Text>
             <Text style={styles.roleText}>Free member</Text>
             <PrimaryButton
