@@ -6,6 +6,7 @@ import InputPrimary from '../components/InputPrimary';
 import PrimaryButton from '../components/PrimaryButton';
 import { CREATE_ACCOUNT_SUCCESS } from '../navigations/routes';
 import { AuthContext } from '../store/AuthContext';
+import downloadImage from '../utils/downloadImage';
 
 const CreateAccountScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
@@ -27,7 +28,8 @@ const CreateAccountScreen = ({ navigation }) => {
         }
 
         try {
-            await signUp(email, password);
+            const user = await signUp(email, password);
+            await downloadImage(user.user?.photoURL)
             navigation.navigate(CREATE_ACCOUNT_SUCCESS);
 
         } catch (error) {
