@@ -9,7 +9,7 @@ const ForgotPasswordScreen = () => {
     const [email, setEmail] = useState('')
 
     return (
-        <Screen withSafeArea>
+        <Screen style={{ paddingVertical: 70 }}>
             <ScrollView bounces={false} contentContainerStyle={{ flexGrow: 1 }} >
                 <View style={styles.container}>
                     <View>
@@ -20,9 +20,7 @@ const ForgotPasswordScreen = () => {
                             value={email}
                             onChangeText={setEmail}
                         />
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }}>
-                            <Text style={styles.forgotPasswordText}>Enter Email address to reset your password</Text>
-                        </View>
+                        <Text style={styles.forgotPasswordText}>Enter Email address to reset your password</Text>
                     </View>
                     <PrimaryButton text={'Next'} />
                 </View>
@@ -57,7 +55,9 @@ const styles = StyleSheet.create({
     },
     forgotPasswordText: {
         fontSize: 14,
-        color: Variables.colors.black.light300
+        color: Variables.colors.black.light300,
+        fontWeight: 'bold',
+        marginTop: 30
     },
     checkboxContainer: {
         flexDirection: 'row',

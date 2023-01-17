@@ -35,7 +35,7 @@ const LoginScreen = ({ navigation }) => {
     }
 
     return (
-        <Screen withSafeArea>
+        <Screen style={{ paddingBottom: 30 }}>
             <ScrollView bounces={false} contentContainerStyle={{ flexGrow: 1 }} >
                 <View style={styles.container}>
                     <View>

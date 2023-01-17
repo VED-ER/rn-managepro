@@ -12,7 +12,7 @@ const CreateAccountSuccessScreen = ({ navigation }) => {
     };
 
     return (
-        <Screen withSafeArea style={{ justifyContent: 'space-between' }}>
+        <Screen style={{ justifyContent: 'space-between' }}>
             <Image
                 source={require('../assets/create-account-success.png')}
                 style={{ marginTop: 100 }}

@@ -40,7 +40,7 @@ const CreateAccountScreen = ({ navigation }) => {
             style={{
                 flex: 1,
                 backgroundColor: Variables.colors.white,
-                padding: 20,
+                paddingHorizontal: 20,
             }}
             behavior={Platform.OS === 'android' ? 'height' : 'padding'}
             keyboardVerticalOffset={50}
