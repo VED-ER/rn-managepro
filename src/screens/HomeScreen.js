@@ -1,10 +1,11 @@
 import { FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Variables } from '../styles/theme'
 import InputPrimary from '../components/InputPrimary'
 import { Setting4 } from '../components/svg'
 import ProjectCard from '../components/ProjectCard'
 import TodayTaskCard from '../components/TodayTaskCard'
+import { AuthContext } from '../store/AuthContext'
 
 const recentProjectsDemo = [
     {
@@ -61,13 +62,15 @@ const todayTasksDemo = [
 const HomeScreen = () => {
     const [searchText, setSearchText] = useState('')
 
+    const { currentUser } = useContext(AuthContext)
+
     const renderRecentItem = ({ item }) => <ProjectCard project={item} style={{ width: 315 }} />
 
     return (
-        <ScrollView style={styles.screenStyle} contentContainerStyle={{ paddingBottom: 50, flexGrow:1 }} >
+        <ScrollView style={styles.screenStyle} contentContainerStyle={{ paddingBottom: 50, flexGrow: 1 }} >
             <View style={{ paddingHorizontal: 20 }}>
                 <Text style={styles.title}>Hello,</Text>
-                <Text style={styles.title}>Pristia Candra</Text>
+                <Text style={styles.title}>{currentUser?.displayName}</Text>
                 <InputPrimary
                     style={{ marginVertical: 30 }}
                     placeholder={'Search projects, tasks...'}
@@ -84,8 +87,8 @@ const HomeScreen = () => {
             </View>
             <FlatList
                 data={recentProjectsDemo}
-                style={{ marginLeft: -10, paddingLeft:20 }}
-                contentContainerStyle={{ padding: 10, paddingRight:40 }}
+                style={{ marginLeft: -10, paddingLeft: 20 }}
+                contentContainerStyle={{ padding: 10, paddingRight: 40 }}
                 renderItem={renderRecentItem}
                 keyExtractor={(item) => item.id}
                 ItemSeparatorComponent={() => <View style={{ padding: 10 }} />}
@@ -106,7 +109,7 @@ export default HomeScreen
 
 const styles = StyleSheet.create({
     screenStyle: {
-        flex:1,
+        flex: 1,
         // paddingLeft: 20,
         paddingTop: 10,
         backgroundColor: Variables.colors.white

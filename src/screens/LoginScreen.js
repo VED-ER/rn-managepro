@@ -16,7 +16,7 @@ const LoginScreen = ({ navigation }) => {
     const [secureTextEntry, setSecureTextEntry] = useState(true)
     const [rememberMe, setRememberMe] = useState(false)
 
-    const { logIn } = useContext(AuthContext)
+    const { logIn, setAvatarUrl } = useContext(AuthContext)
 
     const onIconRightPress = () => {
         setSecureTextEntry(!secureTextEntry)
@@ -29,7 +29,10 @@ const LoginScreen = ({ navigation }) => {
     const onSignInPress = async () => {
         try {
             const user = await logIn(email, password)
-            await downloadImage(user.user?.photoURL)
+            if (user.user?.photoURL) {
+                const img = await downloadImage(user.user?.photoURL)
+                setAvatarUrl(img)
+            }
 
             navigation.reset({ index: 0, routes: [{ name: MAIN }] });
         } catch (error) {

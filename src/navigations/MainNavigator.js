@@ -78,8 +78,10 @@ const MainNavigator = () => {
         const initializeApp = async () => {
             if (currentUser) {
                 try {
-                    const img = await downloadImage(currentUser?.photoURL)
-                    setAvatarUrl(img)
+                    if (currentUser?.photoURL) {
+                        const img = await downloadImage(currentUser.photoURL)
+                        setAvatarUrl(img)
+                    }
 
                     navigation.reset({ index: 0, routes: [{ name: MAIN }] });
                 } catch (error) {

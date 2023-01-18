@@ -1,19 +1,18 @@
-import { Alert, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import Screen from '../components/Screen';
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useContext, useState } from 'react';
 import { Variables } from '../styles/theme';
 import InputPrimary from '../components/InputPrimary';
 import PrimaryButton from '../components/PrimaryButton';
 import { CREATE_ACCOUNT_SUCCESS } from '../navigations/routes';
 import { AuthContext } from '../store/AuthContext';
-import downloadImage from '../utils/downloadImage';
+import { updateProfile } from 'firebase/auth';
 
 const CreateAccountScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
 
-    const { signUp, currentUser } = useContext(AuthContext);
+    const { signUp } = useContext(AuthContext);
 
     const handleCreateAccountPress = async () => {
 
@@ -23,13 +22,15 @@ const CreateAccountScreen = ({ navigation }) => {
         }
 
         if (username.length < 5) {
-            Alert.alert('Username error', 'Username length must be at least 6 characters');
+            Alert.alert('Username error', 'Username length must be at least 5 characters');
             return;
         }
 
         try {
             const user = await signUp(email, password);
-            await downloadImage(user.user?.photoURL)
+
+            await updateProfile(user.user, { displayName: username })
+
             navigation.navigate(CREATE_ACCOUNT_SUCCESS);
 
         } catch (error) {
