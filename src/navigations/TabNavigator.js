@@ -6,13 +6,14 @@ import CreateProjectModal from "../components/CreateProjectModal";
 import Logo from "../components/Logo";
 import { Hometab, Message, Projectstab, Setting4 } from "../components/svg";
 import CreateProjectScreen from "../screens/CreateProjectScreen";
+import EmptyScreen from "../screens/EmptyScreen";
 import HomeScreen from "../screens/HomeScreen";
 import MessagesScreen from "../screens/MessagesScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import ProjectsScreen from "../screens/ProjectsScreen";
 import { AuthContext } from "../store/AuthContext";
 import { Variables } from "../styles/theme";
-import { CREATE_PROJECT, HOME, MESSAGE, PROFILE, PROJECTS } from "./routes";
+import { CREATE_PROJECT, EMPTY_SCREEN, HOME, MESSAGE, PROFILE, PROJECTS } from "./routes";
 
 const Tab = createBottomTabNavigator()
 
@@ -58,8 +59,8 @@ const TabNavigator = () => {
                 }}
             />
             <Tab.Screen
-                name={CREATE_PROJECT}
-                component={CreateProjectScreen}
+                name={EMPTY_SCREEN}
+                component={EmptyScreen}
                 options={{
                     tabBarButton: () => <CreateProjectModal />
                 }}

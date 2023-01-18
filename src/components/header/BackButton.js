@@ -8,7 +8,7 @@ const BackButton = () => {
 
     return (
         <Pressable onPress={() => navigation.goBack()}>
-            <ArrowLeft width={34} height={34} />
+            <ArrowLeft width={30} height={30} />
         </Pressable>
     )
 }

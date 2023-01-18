@@ -2,6 +2,9 @@ import { Animated, Platform, Pressable, StyleSheet, Text, TextInput, View } from
 import React, { useEffect, useRef, useState } from 'react'
 import { Variables } from '../styles/theme'
 
+const INCREASE_HEIGHT_VALUE = Platform.OS === 'ios' ? -8 : -11
+const DECREASE_HEIGHT_VALUE = Platform.OS === 'ios' ? 21 : 19
+
 const InputPrimary = ({ value, onChangeText, placeholder, style, inputStyle, IconRight, onIconRightPress, ...other }) => {
     const [isFocused, setIsFocused] = useState(false)
 
@@ -15,18 +18,20 @@ const InputPrimary = ({ value, onChangeText, placeholder, style, inputStyle, Ico
 
     useEffect(() => {
         if (isFocused || value) {
-            increaseHeight()
+            if (topAnim !== INCREASE_HEIGHT_VALUE)
+                increaseHeight()
         } else if (!value) {
-            decreaseHeight()
+            if (topAnim !== DECREASE_HEIGHT_VALUE)
+                decreaseHeight()
         }
-    }, [isFocused])
+    }, [isFocused, value])
 
     const topAnim = useRef(new Animated.Value(21)).current;
 
     const increaseHeight = () => {
         Animated.timing(topAnim, {
             useNativeDriver: false,
-            toValue: Platform.OS === 'ios' ? -8 : -11,
+            toValue: INCREASE_HEIGHT_VALUE,
             duration: 150
         }).start();
     };
@@ -34,7 +39,7 @@ const InputPrimary = ({ value, onChangeText, placeholder, style, inputStyle, Ico
     const decreaseHeight = () => {
         Animated.timing(topAnim, {
             useNativeDriver: false,
-            toValue: Platform.OS === 'ios' ? 21 : 19,
+            toValue: DECREASE_HEIGHT_VALUE,
             duration: 150
         }).start();
     };

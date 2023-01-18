@@ -2,13 +2,14 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { Variables } from '../styles/theme';
 
-const PrimaryButton = ({ text, onPress, textStyle, style, IconRight, disabled }) => {
+const PrimaryButton = ({ text, onPress, textStyle, style, IconRight, IconLeft, disabled }) => {
     return (
         <Pressable
             onPress={onPress}
             style={({ pressed }) => ([styles.button, style, pressed && { opacity: 0.5 }])}
             disabled={disabled}
         >
+            {IconLeft ? <View style={styles.iconLeft}>{IconLeft}</View> : null}
             <Text style={[styles.text, textStyle]}>{text}</Text>
             {IconRight ? <View style={styles.iconRight}>{IconRight}</View> : null}
         </Pressable>
@@ -34,5 +35,8 @@ const styles = StyleSheet.create({
     },
     iconRight: {
         marginLeft: 10
+    },
+    iconLeft: {
+        marginRight: 10
     }
 });
