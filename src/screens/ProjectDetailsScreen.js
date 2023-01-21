@@ -18,7 +18,7 @@ const ProjectDetailsScreen = ({ route }) => {
         if (route?.params?.project)
             setProject(route.params.project)
     }, [route?.params?.project])
-    console.log(project);
+
     const renderProjectDetailStage = ({ item }) => (<ProjectDetailStage projectTasks={project?.tasks} stage={item} />)
 
     const onDismiss = () => {

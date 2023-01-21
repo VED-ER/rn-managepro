@@ -1,10 +1,12 @@
-import { FlatList, StyleSheet, View } from 'react-native'
-import React, { useState } from 'react'
+import { Alert, FlatList, StyleSheet, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import Screen from '../components/Screen'
 import { Variables } from '../styles/theme'
 import ProjectsTabSelector from '../components/ProjectsTabSelector'
 import ProjectCard from '../components/ProjectCard'
 import { PROJECT_DETAILS } from '../navigations/routes'
+import { collection, db } from '../../firebase'
+import { getDocs } from 'firebase/firestore'
 
 const recentProjectsDemo = [
     {
@@ -98,6 +100,24 @@ const recentProjectsDemo = [
 
 const ProjectsScreen = ({ navigation }) => {
     const [activeTab, setActiveTab] = useState({ name: 'To Do' })
+    const [projects, setProjects] = useState([])
+
+    const collectionRef = collection(db, 'projects')
+
+    useEffect(() => {
+        console.log('FETCHING ALL PROJECTS');
+        getDocs(collectionRef)
+            .then(snapshot => {
+                const snapshotData = []
+                snapshot.docs.forEach(doc => {
+                    snapshotData.push({ ...doc.data(), id: doc.id })
+                })
+                setProjects(snapshotData)
+            })
+            .catch(err => {
+                Alert.alert(err.message)
+            })
+    }, [])
 
     const onTabPress = (tab) => {
         setActiveTab(tab)
@@ -115,7 +135,7 @@ const ProjectsScreen = ({ navigation }) => {
         <Screen style={{ paddingVertical: 0, paddingHorizontal: 0 }}>
             <ProjectsTabSelector activeTab={activeTab} onTabPress={onTabPress} style={{ padding: 20 }} />
             <FlatList
-                data={recentProjectsDemo}
+                data={projects}
                 renderItem={renderProjectCard}
                 keyExtractor={keyExtractor}
                 style={{ padding: 20 }}

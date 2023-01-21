@@ -10,7 +10,7 @@ import { AuthContext } from '../store/AuthContext'
 import { ACCOUNT_DETAILS, LOGIN, ONBOARDING } from '../navigations/routes'
 
 const ProfileScreen = ({ navigation }) => {
-    const { logOut, avatarUrl } = useContext(AuthContext)
+    const { logOut, avatarUrl, currentUser } = useContext(AuthContext)
 
     const handleLogOut = async () => {
         try {
@@ -30,9 +30,9 @@ const ProfileScreen = ({ navigation }) => {
     )
 
     return (
-        <Screen style={{ paddingVertical: 20}}>
+        <Screen style={{ paddingVertical: 20 }}>
             <Avatar style={styles.avatarStyle} textStyle={styles.avatarText} imageUri={avatarUrl} />
-            <Text style={styles.title}>Pristia Candra</Text>
+            <Text style={styles.title}>{currentUser?.displayName}</Text>
             <Text style={styles.roleText}>Free member</Text>
             <PrimaryButton
                 text={'Upgrade Plan - Pro'}

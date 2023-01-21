@@ -85,7 +85,7 @@ const HomeScreen = () => {
                     <Text style={styles.recentSeeAllText}>SEE ALL</Text>
                 </Pressable>
             </View>
-            <FlatList
+            {/* <FlatList
                 data={recentProjectsDemo}
                 style={{ marginLeft: -10, paddingLeft: 20 }}
                 contentContainerStyle={{ padding: 10, paddingRight: 40 }}
@@ -94,7 +94,7 @@ const HomeScreen = () => {
                 ItemSeparatorComponent={() => <View style={{ padding: 10 }} />}
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
-            />
+            /> */}
             <View style={{ paddingHorizontal: 20 }}>
                 <View style={{ marginTop: 30 }}>
                     <Text style={styles.subtitle}>Tasks for Today</Text>

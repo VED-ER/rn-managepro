@@ -3,8 +3,18 @@ import React from 'react'
 import { Variables } from '../styles/theme'
 import { More } from './svg'
 import Avatar from './Avatar'
+import { format, formatDuration, intervalToDuration, parseISO } from 'date-fns'
+import convertFirebaseTimestampToDate from '../utils/convertFirebaseTimestampToDate'
 
 const ProjectCard = ({ project, style, onPress }) => {
+
+    const createdAtDate = convertFirebaseTimestampToDate(project?.createdAt)
+    const dueDateDate = convertFirebaseTimestampToDate(project?.dueDate)
+
+    const formatedCreatedAt = format(createdAtDate, 'EEE, MMM dd')
+    const duration = intervalToDuration({ start: createdAtDate, end: dueDateDate })
+    const formatedDueDate = formatDuration(duration, { format: ['years', 'months', 'weeks', 'days'] })
+
     return (
         <Pressable
             onPress={onPress}
@@ -18,14 +28,7 @@ const ProjectCard = ({ project, style, onPress }) => {
                     {project?.team.map((i, index) => (<Avatar
                         key={index}
                         textStyle={{ fontSize: 10, color: Variables.colors.white }}
-                        style={{
-                            width: 25,
-                            height: 25,
-                            borderWidth: 2,
-                            borderColor: Variables.colors.white,
-                            marginLeft: index > 0 ? -5 : 0,
-                            backgroundColor: Variables.colors.brand.dark700
-                        }}
+                        style={[styles.teamContainerAvatar, { marginLeft: index > 0 ? -5 : 0 }]}
                     />)
                     )}
                 </View>
@@ -39,13 +42,13 @@ const ProjectCard = ({ project, style, onPress }) => {
                         </Pressable>
                     </View>
                     <View >
-                        <Text style={styles.projectTypeText}>{project?.type}. <Text >{project?.dueDate}</Text></Text>
+                        <Text style={styles.projectTypeText}>{project?.type}. <Text >{formatedCreatedAt}</Text></Text>
                     </View>
                 </View>
                 <View>
                     <View style={styles.tasksTextContainer}>
                         <Text style={styles.tasksCompletedText}>{project?.tasksCompleted} / <Text style={styles.tasksLeftText} >{project?.tasks.length}</Text></Text>
-                        <Text style={styles.tasksLeftText}>7 days left</Text>
+                        <Text style={styles.tasksLeftText}>{`${formatedDueDate} left`}</Text>
                     </View>
                     <View style={styles.progressBar}>
                         <View style={styles.progress} />
@@ -97,6 +100,13 @@ const styles = StyleSheet.create({
     },
     teamContainer: {
         flexDirection: 'row'
+    },
+    teamContainerAvatar: {
+        width: 25,
+        height: 25,
+        borderWidth: 2,
+        borderColor: Variables.colors.white,
+        backgroundColor: Variables.colors.brand.dark700
     },
     bottomContainer: {
         flex: 1,
