@@ -1,13 +1,13 @@
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import React, { useContext, useState } from 'react';
 import Screen from '../components/Screen';
-import PrimaryButton from '../components/PrimaryButton';
 import * as ImagePicker from 'expo-image-picker';
 import uploadAvatarAsync from '../utils/uploadAvatarAsync';
 import { AuthContext } from '../store/AuthContext';
 import Avatar from '../components/Avatar';
 import { Variables } from '../styles/theme';
 import InputPrimary from '../components/InputPrimary';
+import { updateProfile } from 'firebase/auth';
 
 const AccountDetailsScreen = () => {
     const { currentUser, setAvatarUrl, avatarUrl } = useContext(AuthContext);
@@ -26,12 +26,17 @@ const AccountDetailsScreen = () => {
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
             aspect: [1, 1],
-            quality: 1,
+            quality: 0.2,
         });
         // console.log(JSON.stringify(result, null, 2));
 
         if (!result.canceled) {
-            uploadAvatarAsync(result.assets[0].uri, currentUser).then(setAvatarUrl);
+            try {
+                const photoURL = await uploadAvatarAsync(result.assets[0].uri, currentUser).then(setAvatarUrl);
+                updateProfile(currentUser, { photoURL })
+            } catch (error) {
+                Alert.alert(error.message)
+            }
         }
     };
 

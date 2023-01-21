@@ -6,7 +6,7 @@ const PrimaryButton = ({ text, onPress, textStyle, style, IconRight, IconLeft, d
     return (
         <Pressable
             onPress={onPress}
-            style={({ pressed }) => ([styles.button, style, pressed && { opacity: 0.5 }])}
+            style={({ pressed }) => ([styles.button, style, (pressed || disabled) && { opacity: 0.5 }])}
             disabled={disabled}
         >
             {IconLeft ? <View style={styles.iconLeft}>{IconLeft}</View> : null}

@@ -4,7 +4,7 @@ import { getAuth, initializeAuth } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getReactNativePersistence } from 'firebase/auth/react-native';
 import { REACT_APP_FIREBASE_API_KEY, REACT_APP_FIREBASE_AUTH_DOMAIN, REACT_APP_FIREBASE_PROJECT_ID, REACT_APP_FIREBASE_STORAGE_BUCKET, REACT_APP_FIREBASE_MESSAGING_SENDER_ID, REACT_APP_FIREBASE_APP_ID } from '@env'
-import { collection, getFirestore, Timestamp } from "firebase/firestore"
+import { collection, getFirestore, Timestamp, addDoc } from "firebase/firestore"
 
 const firebaseConfig = {
     apiKey: REACT_APP_FIREBASE_API_KEY,
@@ -14,6 +14,11 @@ const firebaseConfig = {
     messagingSenderId: REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
     appId: REACT_APP_FIREBASE_APP_ID
 };
+
+const COLLECTIONS = {
+    USERS: 'users',
+    PROJECTS: 'projects'
+}
 
 let app
 let auth
@@ -33,5 +38,18 @@ if (getApps().length < 1) {
     db = getFirestore()
 }
 
+const usersCollectionReference = collection(db, COLLECTIONS.USERS)
 
-export { auth, storage, Timestamp, db, collection }
+const addUserToFirebase = async (data) => {
+    return addDoc(usersCollectionReference, data)
+}
+
+
+export {
+    auth,
+    storage,
+    Timestamp,
+    db,
+    collection,
+    addUserToFirebase
+}

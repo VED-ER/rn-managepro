@@ -1,4 +1,3 @@
-import { updateProfile } from "firebase/auth";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Alert } from "react-native";
 import { storage } from "../../firebase";
@@ -18,7 +17,6 @@ const uploadAvatarAsync = async (file, currentUser) => {
         const snapshot = await uploadBytes(fileRef, blobFile)
         const photoURL = await getDownloadURL(snapshot.ref)
 
-        await updateProfile(currentUser, { photoURL })
         return photoURL
     } catch (error) {
         Alert.alert('Error occured', error.message)
