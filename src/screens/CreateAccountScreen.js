@@ -1,4 +1,4 @@
-import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import React, { useContext, useState } from 'react';
 import { Variables } from '../styles/theme';
 import InputPrimary from '../components/InputPrimary';
@@ -10,22 +10,19 @@ import { addUserToFirebase } from '../../firebase';
 import Avatar from '../components/Avatar';
 import * as ImagePicker from 'expo-image-picker';
 import uploadAvatarAsync from '../utils/uploadAvatarAsync';
-
-const DEFUALT_AVATAR_URI = 'gs://rn-managepro.appspot.com/avatars/userdefault.png'
+import downloadImage from '../utils/downloadImage';
 
 const CreateAccountScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
-    const [avatar, setAvatar] = useState(null)
+    const [selectedAvatar, setSelectedAvatar] = useState('')
     const [loading, setLoading] = useState(false)
 
-    const defaultAvatar = require('../assets/userdefault.png')
-
-    const { signUp } = useContext(AuthContext);
+    const { signUp, setAvatarUrl } = useContext(AuthContext);
 
     const handleCreateAccountPress = async () => {
-        setLoading(true)
+
 
         if (!username) {
             Alert.alert('Username error', 'Please enter a username you want to use');
@@ -36,28 +33,31 @@ const CreateAccountScreen = ({ navigation }) => {
             Alert.alert('Username error', 'Username length must be at least 5 characters');
             return;
         }
-
+        setLoading(true)
         try {
             // signing up the user
             const user = await signUp(email, password);
 
-            const photoURL = avatar?.uri ? avatar.uri : DEFUALT_AVATAR_URI
-
-            // uploading an avatar if the user picked one
-            if (photoURL !== DEFUALT_AVATAR_URI) {
-                console.log('uploading avatar async');
-                await uploadAvatarAsync(photoURL, user.user)
-            }
+            // uploading an avatar
+            const photoURL = await uploadAvatarAsync(selectedAvatar, user.user)
 
             // updating the profile to username and avatar uri
-            await updateProfile(user.user, { displayName: username, photoURL })
+            await updateProfile(user.user, { displayName: username, photoURL: photoURL })
 
             // adding user to users collection
-            addUserToFirebase({
+            await addUserToFirebase({
                 name: username,
                 online: true,
-                photoURL
-            })
+                photoURL: photoURL
+            },
+                user.user.uid
+            )
+
+            // downloading an avatar
+            if (selectedAvatar) {
+                const img = await downloadImage(photoURL)
+                setAvatarUrl(img)
+            }
 
             navigation.navigate(CREATE_ACCOUNT_SUCCESS);
 
@@ -84,7 +84,7 @@ const CreateAccountScreen = ({ navigation }) => {
         });
 
         if (!result.canceled) {
-            setAvatar({ uri: result.assets[0].uri })
+            setSelectedAvatar(result.assets[0].uri)
         }
     }
 
@@ -126,11 +126,13 @@ const CreateAccountScreen = ({ navigation }) => {
                             secureTextEntry={true}
                         />
                         <View style={{ flexDirection: 'row', marginTop: 30 }}>
-                            <Image
-                                source={avatar ? avatar : defaultAvatar}
-                                style={styles.avatar}
+                            <Avatar imageUri={selectedAvatar} style={styles.avatar} />
+                            <PrimaryButton
+                                disabled={loading}
+                                text={'Choose avatar'}
+                                style={{ flex: 1, marginLeft: 40 }}
+                                onPress={onChooseAvatarPress}
                             />
-                            <PrimaryButton text={'Choose avatar'} style={{ flex: 1, marginLeft: 40 }} onPress={onChooseAvatarPress} />
                         </View>
                     </View>
                     <PrimaryButton disabled={loading} style={{ marginTop: 20 }} text={'Next'} onPress={handleCreateAccountPress} />
@@ -177,7 +179,7 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         borderRadius: 60,
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: Variables.colors.brand.default
     }
 });

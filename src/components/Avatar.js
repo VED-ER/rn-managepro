@@ -2,20 +2,17 @@ import { Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Variables } from '../styles/theme'
 
-const Avatar = ({ style, textStyle, imageUri, imageStyle }) => {
+const Avatar = ({ style, imageUri, imageStyle }) => {
+
+    const source = imageUri ? { uri: imageUri } : require('../assets/defaultuser.png')
+
     return (
         <View style={[styles.container, style]}>
-            {
-                imageUri
-                    ?
-                    <Image
-                        source={{ uri: imageUri }}
-                        style={[styles.image, imageStyle]}
-                        resizeMode={'cover'}
-                    />
-                    :
-                    <Text style={textStyle}>VE</Text>
-            }
+            <Image
+                source={source}
+                style={[styles.image, imageStyle]}
+                resizeMode={'cover'}
+            />
         </View>
     )
 }

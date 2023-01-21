@@ -8,6 +8,9 @@ import Avatar from '../components/Avatar';
 import { Variables } from '../styles/theme';
 import InputPrimary from '../components/InputPrimary';
 import { updateProfile } from 'firebase/auth';
+import downloadImage from '../utils/downloadImage';
+import { updateUserCollection } from '../../firebase';
+import { Edit } from '../components/svg';
 
 const AccountDetailsScreen = () => {
     const { currentUser, setAvatarUrl, avatarUrl } = useContext(AuthContext);
@@ -32,8 +35,12 @@ const AccountDetailsScreen = () => {
 
         if (!result.canceled) {
             try {
-                const photoURL = await uploadAvatarAsync(result.assets[0].uri, currentUser).then(setAvatarUrl);
-                updateProfile(currentUser, { photoURL })
+                const photoURL = await uploadAvatarAsync(result.assets[0].uri, currentUser)
+                const img = await downloadImage(photoURL)
+                setAvatarUrl(img)
+                await updateProfile(currentUser, { photoURL })
+
+                await updateUserCollection({ photoURL }, currentUser.uid)
             } catch (error) {
                 Alert.alert(error.message)
             }
@@ -47,9 +54,9 @@ const AccountDetailsScreen = () => {
                     <Avatar imageUri={avatarUrl} style={styles.avatar} imageStyle={styles.avatarImage} />
                     <Pressable
                         onPress={handleUploadAvatarPress}
-                        style={({ pressed }) => ([styles.avatarEditContainer])}
+                        style={({ pressed }) => ([styles.avatarEditContainer, pressed && { opacity: 0.9 }])}
                     >
-
+                        <Edit width={20} height={20} color={Variables.colors.white} />
                     </Pressable>
                 </View>
                 <View style={{ padding: 15 }} />
@@ -95,6 +102,8 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         right: 0,
-        elevation: 10
+        elevation: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 });

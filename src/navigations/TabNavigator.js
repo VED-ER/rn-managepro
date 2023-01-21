@@ -37,10 +37,8 @@ const TabNavigator = () => {
                 component={HomeScreen}
                 options={{
                     headerLeft: () => <Logo style={{ marginLeft: 20 }} />,
-                    headerRight: () => <Avatar style={{ marginRight: 20 }} />,
-                    tabBarIcon: ({ color, size }) => (<Hometab width={size} height={size} color={color} />),
-
-
+                    headerRight: () => <Avatar imageUri={avatarUrl} style={{ marginRight: 20 }} />,
+                    tabBarIcon: ({ color, size }) => (<Hometab width={size} height={size} color={color} />)
                 }}
             />
             <Tab.Screen

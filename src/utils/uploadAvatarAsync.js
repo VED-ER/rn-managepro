@@ -5,6 +5,7 @@ import 'react-native-get-random-values';
 import { v4 as uuidV4 } from "uuid"
 
 const uploadAvatarAsync = async (file, currentUser) => {
+    if (!file) return ''
     const response = await fetch(file)
     const blobFile = await response.blob()
 
