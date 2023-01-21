@@ -1,4 +1,4 @@
-import { Keyboard, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Alert, Keyboard, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { Variables } from '../styles/theme'
 import { Add } from './svg'
@@ -28,12 +28,12 @@ const EMPTY_TASK = {
 }
 
 const EMPTY_PROJECT = {
-    name: '', //
+    name: '',
     description: '',
-    createdAt: null, //
-    createdBy: null, //
+    createdAt: null,
+    createdBy: null,
     dueDate: null,
-    type: null, //
+    type: null,
     tasks: [],
     tasksInProgress: 0,
     tasksCompleted: 0,
@@ -55,6 +55,17 @@ const CreateProjectModal = () => {
     }
 
     const onCreateWorkspacePress = () => {
+
+        if (!project.name) {
+            Alert.alert('Project name error', 'Please enter a name for your project')
+            return
+        }
+
+        if (!project.type) {
+            Alert.alert('Project type error', 'Please enter your project type')
+            return
+        }
+
         const createdProject = {
             ...project,
             createdAt: Timestamp.now(),

@@ -13,6 +13,7 @@ const PROJECT_DETAILS_STAGES = [{ name: 'To Do' }, { name: 'In Progress' }, { na
 const ProjectDetailsScreen = ({ route }) => {
     const [showBottomSheet, setShowBottomSheet] = useState(false)
     const [project, setProject] = useState(null)
+    console.log(JSON.stringify(project, null,2));
 
     useEffect(() => {
         if (route?.params?.project)

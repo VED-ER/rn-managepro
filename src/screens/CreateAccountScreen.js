@@ -19,7 +19,7 @@ const CreateAccountScreen = ({ navigation }) => {
     const [selectedAvatar, setSelectedAvatar] = useState('')
     const [loading, setLoading] = useState(false)
 
-    const { signUp, setAvatarUrl } = useContext(AuthContext);
+    const { signUp, setAvatarUrl, setCurrentUser } = useContext(AuthContext);
 
     const handleCreateAccountPress = async () => {
 
@@ -43,6 +43,8 @@ const CreateAccountScreen = ({ navigation }) => {
 
             // updating the profile to username and avatar uri
             await updateProfile(user.user, { displayName: username, photoURL: photoURL })
+
+            setCurrentUser(user => ({ ...user, photoURL }))
 
             // adding user to users collection
             await addUserToFirebase({

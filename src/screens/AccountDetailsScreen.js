@@ -13,7 +13,7 @@ import { updateUserCollection } from '../../firebase';
 import { Edit } from '../components/svg';
 
 const AccountDetailsScreen = () => {
-    const { currentUser, setAvatarUrl, avatarUrl } = useContext(AuthContext);
+    const { currentUser, setCurrentUser, setAvatarUrl, avatarUrl } = useContext(AuthContext);
     const [username, setUsername] = useState(currentUser.displayName);
     const [email, setEmail] = useState(currentUser.email);
 
@@ -39,6 +39,8 @@ const AccountDetailsScreen = () => {
                 const img = await downloadImage(photoURL)
                 setAvatarUrl(img)
                 await updateProfile(currentUser, { photoURL })
+
+                setCurrentUser(user => ({ ...user, photoURL }))
 
                 await updateUserCollection({ photoURL }, currentUser.uid)
             } catch (error) {
