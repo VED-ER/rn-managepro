@@ -1,4 +1,4 @@
-import { Alert, FlatList, Image, Platform, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
+import { Alert, FlatList, Image, ImageBackground, Platform, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Variables } from '../styles/theme'
 import Avatar from '../components/Avatar'
@@ -10,6 +10,9 @@ import ProjectOptionsModal from '../components/ProjectOptionsModal'
 import ProjectDetailsHeaderRight from '../components/header/ProjectDetailsHeaderRight'
 import ColorPickerModal from '../components/ColorPickerModal'
 import { updateProjectsCollection } from '../../firebase'
+import * as ImagePicker from 'expo-image-picker';
+import downloadImage from '../utils/downloadImage'
+import uploadProjectCover from '../utils/uploadProjectCover'
 
 const PROJECT_DETAILS_STAGES = [{ name: 'To Do' }, { name: 'In Progress' }, { name: 'Completed' }]
 
@@ -29,34 +32,7 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
     const placeholderWidth = width > 350 ? 350 : width
     const placeholderHeight = (placeholderWidth * 196) / 295
 
-    const OPTION_ITEMS = useMemo(() => (
-        [
-            {
-                name: 'Add Task',
-                icon: <Addsquare width={24} />
-            },
-            {
-                name: 'Change Cover',
-                icon: <Gallery width={24} />
-            },
-            {
-                name: 'Edit Project',
-                icon: <Editoption width={24} />
-            },
-            {
-                name: 'Color',
-                icon: <Colorswatch width={24} />,
-                onPress: () => {
-                    setShowColorPicker(true)
-                    setOptionsModalVisible(false)
-                }
-            },
-            {
-                name: 'Delete',
-                icon: <Trash width={24} />
-            },
-        ]
-    ), [])
+
 
     useEffect(() => {
         if (route?.params?.project)
@@ -80,7 +56,10 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
     const onSelectColor = async (color) => {
         setLoading(true)
         try {
-            await updateProjectsCollection({ color }, project.id)
+            if (color !== project.color) {
+                console.log('in');
+                await updateProjectsCollection({ color }, project.id)
+            }
             setShowColorPicker(false)
             setProject(prev => ({ ...prev, color }))
         } catch (error) {
@@ -94,10 +73,76 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
         setShowColorPicker(false)
     }
 
+    const onChangeCoverPress = async () => {
+        const { status, canAskAgain } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (status !== 'granted') {
+            Alert.alert('No access', 'Sorry we need camera roll permissions. Please enable the permission in settings.');
+        }
+
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 0.2,
+        });
+
+        if (!result.canceled) {
+            try {
+                const photoURL = await uploadProjectCover(result.assets[0].uri, project)
+                // const img = await downloadImage(photoURL)
+                // TODO: cache project cover images
+
+                await updateProjectsCollection({ coverImage: photoURL }, project.id)
+                setProject(prev => ({ ...prev, coverImage: photoURL }))
+            } catch (error) {
+                Alert.alert(error.message)
+            }
+        }
+        setOptionsModalVisible(false)
+    }
+
+    const OPTION_ITEMS = useMemo(() => (
+        [
+            {
+                name: 'Add Task',
+                icon: <Addsquare width={24} />
+            },
+            {
+                name: 'Change Cover',
+                icon: <Gallery width={24} />,
+                onPress: onChangeCoverPress
+            },
+            {
+                name: 'Edit Project',
+                icon: <Editoption width={24} />
+            },
+            {
+                name: 'Color',
+                icon: <Colorswatch width={24} />,
+                onPress: () => {
+                    setShowColorPicker(true)
+                    setOptionsModalVisible(false)
+                }
+            },
+            {
+                name: 'Delete',
+                icon: <Trash width={24} />
+            },
+        ]
+    ), [])
+
     return (
         <Screen style={styles.screenStyle}>
             {optionsModalVisible && <ProjectOptionsModal options={OPTION_ITEMS} />}
-            <View style={[styles.topImageContainer, { backgroundColor: project?.color ? project.color : Variables.colors.black.light100 }]}>
+            <ImageBackground
+                source={{ uri: project?.coverImage }}
+                resizeMode={'cover'}
+                style={[
+                    styles.topImageContainer,
+                    { backgroundColor: project?.color ? project.color : Variables.colors.black.light100 }
+                ]}
+            >
                 <Avatar style={styles.projectOwnerAvatar} imageUri={newProject ? avatarUrl : null} />
                 <View style={styles.teamContainer}>
                     {project?.team?.map((i, index) => (<Avatar
@@ -107,7 +152,7 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
                     />)
                     )}
                 </View>
-            </View>
+            </ImageBackground>
             <View style={styles.projectDetailsContainer}>
                 <View>
                     <Text style={styles.projectTitle}>{project?.name}</Text>

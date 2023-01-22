@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Variables } from '../styles/theme'
 import { More } from './svg'
@@ -23,7 +23,12 @@ const ProjectCard = ({ project, style, onPress }) => {
             onPress={onPress}
             style={({ pressed }) => ([styles.container, style, pressed && { opacity: 0.5 }])}
         >
-            <View style={[styles.upperContainer, project?.color && { backgroundColor: project.color }]}>
+            <ImageBackground
+                imageStyle={styles.coverImage}
+                source={{ uri: project?.coverImage }}
+                resizeMode={'cover'}
+                style={[styles.upperContainer, project?.color && { backgroundColor: project.color }]}
+            >
                 <View style={styles.projectIcon}>
                     <Text style={styles.projectIconText}>PP</Text>
                 </View>
@@ -35,7 +40,7 @@ const ProjectCard = ({ project, style, onPress }) => {
                     />)
                     )}
                 </View>
-            </View>
+            </ImageBackground>
             <View style={styles.bottomContainer}>
                 <View>
                     <View style={styles.projectNameContainer}>
@@ -152,5 +157,9 @@ const styles = StyleSheet.create({
         height: 5,
         backgroundColor: Variables.colors.brand.default,
         width: '57%'
+    },
+    coverImage: {
+        borderTopLeftRadius: Variables.borderRadius,
+        borderTopRightRadius: Variables.borderRadius
     }
 })
