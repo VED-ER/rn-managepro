@@ -73,7 +73,8 @@ const CreateProjectModal = () => {
             createdAt: Timestamp.now(),
             createdBy: {
                 userId: currentUser.uid
-            }
+            },
+            color: Variables.colors.black.light100
         }
 
         try {

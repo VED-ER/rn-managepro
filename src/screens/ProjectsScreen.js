@@ -139,8 +139,8 @@ const ProjectsScreen = ({ navigation }) => {
                 data={projects}
                 renderItem={renderProjectCard}
                 keyExtractor={keyExtractor}
-                style={{ padding: 20 }}
-                contentContainerStyle={{ paddingBottom: 40 }}
+                // style={{ padding: 20 }}
+                contentContainerStyle={{ paddingBottom: 40, padding:20 }}
                 ItemSeparatorComponent={<View style={{ padding: 10 }} />}
             />
         </Screen>

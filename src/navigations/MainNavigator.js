@@ -52,9 +52,9 @@ const AppNavigator = ({ navigation }) => {
             <Stack.Screen
                 name={PROJECT_DETAILS}
                 component={ProjectDetailsScreen}
-                options={{
-                    headerRight: () => <ProjectDetailsHeaderRight />
-                }}
+                // options={{
+                //     headerRight: () => <ProjectDetailsHeaderRight />
+                // }}
             />
             <Stack.Screen
                 name={ACCOUNT_DETAILS}

@@ -1,18 +1,23 @@
-import { FlatList, Image, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import { FlatList, Image, Platform, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Variables } from '../styles/theme'
 import Avatar from '../components/Avatar'
 import ProjectDetailStage from '../components/ProjectDetailStage'
 import Screen from '../components/Screen'
-import { Editproject, Notasksplaceholder } from '../components/svg'
+import { Addsquare, Colorswatch, Editoption, Editproject, Gallery, Notasksplaceholder, Trash } from '../components/svg'
 import { AuthContext } from '../store/AuthContext'
+import ProjectOptionsModal from '../components/ProjectOptionsModal'
+import ProjectDetailsHeaderRight from '../components/header/ProjectDetailsHeaderRight'
+import ColorPickerModal from '../components/ColorPickerModal'
 
 const PROJECT_DETAILS_STAGES = [{ name: 'To Do' }, { name: 'In Progress' }, { name: 'Completed' }]
 
-const ProjectDetailsScreen = ({ route }) => {
+const ProjectDetailsScreen = ({ route, navigation }) => {
     const [newProject, setNewProject] = useState(false)
     const [project, setProject] = useState(null)
     const [tasks, setTasks] = useState([])
+    const [optionsModalVisible, setOptionsModalVisible] = useState(false)
+    const [showColorPicker, setShowColorPicker] = useState(false)
     console.log(JSON.stringify(project, null, 2));
 
     const { currentUser, avatarUrl } = useContext(AuthContext)
@@ -21,6 +26,35 @@ const ProjectDetailsScreen = ({ route }) => {
 
     const placeholderWidth = width > 350 ? 350 : width
     const placeholderHeight = (placeholderWidth * 196) / 295
+
+    const OPTION_ITEMS = useMemo(() => (
+        [
+            {
+                name: 'Add Task',
+                icon: <Addsquare width={24} />
+            },
+            {
+                name: 'Change Cover',
+                icon: <Gallery width={24} />
+            },
+            {
+                name: 'Edit Project',
+                icon: <Editoption width={24} />
+            },
+            {
+                name: 'Color',
+                icon: <Colorswatch width={24} />,
+                onPress: () => {
+                    setShowColorPicker(true)
+                    setOptionsModalVisible(false)
+                }
+            },
+            {
+                name: 'Delete',
+                icon: <Trash width={24} />
+            },
+        ]
+    ), [])
 
     useEffect(() => {
         if (route?.params?.project)
@@ -31,8 +65,24 @@ const ProjectDetailsScreen = ({ route }) => {
 
     const renderProjectDetailStage = ({ item }) => (<ProjectDetailStage projectTasks={project?.tasks} stage={item} />)
 
+    const onOptionsPress = () => {
+        setOptionsModalVisible(prev => (!prev))
+    }
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerRight: () => <ProjectDetailsHeaderRight onOptionsPress={onOptionsPress} />
+        })
+    }, [navigation])
+
+    const onSelectColor = (color) => {
+        setShowColorPicker(false)
+        setProject(prev => ({ ...prev, color }))
+    }
+
     return (
         <Screen style={styles.screenStyle}>
+            {optionsModalVisible && <ProjectOptionsModal options={OPTION_ITEMS} />}
             <View style={[styles.topImageContainer, { backgroundColor: project?.color ? project.color : Variables.colors.black.light100 }]}>
                 <Avatar style={styles.projectOwnerAvatar} imageUri={newProject ? avatarUrl : null} />
                 <View style={styles.teamContainer}>
@@ -69,6 +119,7 @@ const ProjectDetailsScreen = ({ route }) => {
                     </View>
                 }
             </View>
+            <ColorPickerModal showModal={showColorPicker} onSelectColor={onSelectColor} value={project?.color} />
         </Screen>
     )
 }
@@ -78,7 +129,7 @@ export default ProjectDetailsScreen
 const styles = StyleSheet.create({
     screenStyle: {
         paddingHorizontal: 0,
-        paddingVertical: 10
+        paddingVertical: Platform.OS === 'ios' ? 10 : 0
     },
     topImageContainer: {
         height: 225,

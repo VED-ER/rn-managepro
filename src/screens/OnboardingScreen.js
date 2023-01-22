@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, View } from 'react-native'
+import { FlatList, Platform, StyleSheet, View } from 'react-native'
 import React, { useRef, useState } from 'react'
 import Screen from '../components/Screen'
 import OnboardingSlide from '../components/OnboardingSlide'
@@ -8,7 +8,7 @@ import { Variables } from '../styles/theme'
 import SignInContainer from '../components/SignInContainer'
 import { LOGIN } from '../navigations/routes'
 
-const OnboardingScreen = ({navigation}) => {
+const OnboardingScreen = ({ navigation }) => {
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
 
     const renderItem = ({ item }) => <OnboardingSlide title={item.title} image={item.image} currentSlideIndex={currentSlideIndex} />
@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
     },
     screenStyle: {
         paddingTop: 50,
+        paddingBottom: Platform.OS === 'android' ? 30 : 70,
         paddingHorizontal: 0,
     }
 })
