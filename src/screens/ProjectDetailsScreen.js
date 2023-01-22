@@ -1,19 +1,22 @@
-import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { FlatList, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Variables } from '../styles/theme'
 import Avatar from '../components/Avatar'
 import ProjectDetailStage from '../components/ProjectDetailStage'
 import Screen from '../components/Screen'
-import BottomSheet from '../components/BottomSheet'
-import InputPrimary from '../components/InputPrimary'
-import PrimaryButton from '../components/PrimaryButton'
+import { Notasksplaceholder } from '../components/svg'
 
 const PROJECT_DETAILS_STAGES = [{ name: 'To Do' }, { name: 'In Progress' }, { name: 'Completed' }]
 
 const ProjectDetailsScreen = ({ route }) => {
-    const [showBottomSheet, setShowBottomSheet] = useState(false)
     const [project, setProject] = useState(null)
-    console.log(JSON.stringify(project, null,2));
+    const [tasks, setTasks] = useState([])
+    console.log(JSON.stringify(project, null, 2));
+
+    const { width } = useWindowDimensions()
+
+    const placeholderWidth = width > 350 ? 350 : width
+    const placeholderHeight = (placeholderWidth * 196) / 295
 
     useEffect(() => {
         if (route?.params?.project)
@@ -21,11 +24,6 @@ const ProjectDetailsScreen = ({ route }) => {
     }, [route?.params?.project])
 
     const renderProjectDetailStage = ({ item }) => (<ProjectDetailStage projectTasks={project?.tasks} stage={item} />)
-
-    const onDismiss = () => {
-        setShowBottomSheet(false)
-        Keyboard.dismiss()
-    }
 
     return (
         <Screen style={styles.screenStyle}>
@@ -47,16 +45,25 @@ const ProjectDetailsScreen = ({ route }) => {
                     <Text style={styles.projectTitle}>{project?.name}</Text>
                     <Text style={styles.projectDescription}>{project?.description ? project.description : 'Add description'}</Text>
                 </View>
-                <FlatList
-                    data={PROJECT_DETAILS_STAGES}
-                    renderItem={renderProjectDetailStage}
-                    keyExtractor={(item, index) => index}
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                    ItemSeparatorComponent={<View style={{ padding: 10 }} />}
-                    style={{ marginLeft: -10 }}
-                    contentContainerStyle={{ padding: 10 }}
-                />
+                {tasks.length > 0
+                    ?
+                    <FlatList
+                        data={PROJECT_DETAILS_STAGES}
+                        renderItem={renderProjectDetailStage}
+                        keyExtractor={(item, index) => index}
+                        horizontal={true}
+                        showsHorizontalScrollIndicator={false}
+                        ItemSeparatorComponent={<View style={{ padding: 10 }} />}
+                        style={{ marginLeft: -10 }}
+                        contentContainerStyle={{ padding: 10 }}
+                    />
+                    :
+                    <View style={styles.noTasksPlaceholderContainer}>
+                        <Notasksplaceholder width={placeholderWidth} height={placeholderHeight} />
+                        <Text style={styles.noTasksPlaceholderTitle}>No tasks here yet</Text>
+                        <Text style={styles.noTasksPlaceholderSubtitle}>Add task first</Text>
+                    </View>
+                }
             </View>
         </Screen>
     )
@@ -120,5 +127,21 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: Variables.colors.white,
         backgroundColor: Variables.colors.brand.dark700
+    },
+    noTasksPlaceholderContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    noTasksPlaceholderTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: Variables.colors.black.light400,
+        marginTop: 30
+    },
+    noTasksPlaceholderSubtitle: {
+        fontSize: 14,
+        color: Variables.colors.black.light300,
+        marginTop: 5
     }
 })

@@ -16,6 +16,7 @@ export { default as Logout } from "./Logout";
 export { default as ManageProIcon } from "./ManageProIcon";
 export { default as Message } from "./Message";
 export { default as More } from "./More";
+export { default as Notasksplaceholder } from "./Notasksplaceholder";
 export { default as Notification } from "./Notification";
 export { default as ProfileCircle } from "./ProfileCircle";
 export { default as Projectstab } from "./Projectstab";
