@@ -1,8 +1,8 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { Variables } from '../styles/theme';
 
-const PrimaryButton = ({ text, onPress, textStyle, style, IconRight, IconLeft, disabled }) => {
+const PrimaryButton = ({ text, onPress, textStyle, style, IconRight, IconLeft, disabled, loading }) => {
     return (
         <Pressable
             onPress={onPress}
@@ -10,7 +10,12 @@ const PrimaryButton = ({ text, onPress, textStyle, style, IconRight, IconLeft, d
             disabled={disabled}
         >
             {IconLeft ? <View style={styles.iconLeft}>{IconLeft}</View> : null}
-            <Text style={[styles.text, textStyle]}>{text}</Text>
+            {loading
+                ?
+                <ActivityIndicator size={'small'} />
+                :
+                <Text style={[styles.text, textStyle]}>{text}</Text>
+            }
             {IconRight ? <View style={styles.iconRight}>{IconRight}</View> : null}
         </Pressable>
     );

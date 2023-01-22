@@ -1,17 +1,21 @@
-import { FlatList, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { FlatList, Image, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
 import { Variables } from '../styles/theme'
 import Avatar from '../components/Avatar'
 import ProjectDetailStage from '../components/ProjectDetailStage'
 import Screen from '../components/Screen'
-import { Notasksplaceholder } from '../components/svg'
+import { Editproject, Notasksplaceholder } from '../components/svg'
+import { AuthContext } from '../store/AuthContext'
 
 const PROJECT_DETAILS_STAGES = [{ name: 'To Do' }, { name: 'In Progress' }, { name: 'Completed' }]
 
 const ProjectDetailsScreen = ({ route }) => {
+    const [newProject, setNewProject] = useState(false)
     const [project, setProject] = useState(null)
     const [tasks, setTasks] = useState([])
     console.log(JSON.stringify(project, null, 2));
+
+    const { currentUser, avatarUrl } = useContext(AuthContext)
 
     const { width } = useWindowDimensions()
 
@@ -21,16 +25,16 @@ const ProjectDetailsScreen = ({ route }) => {
     useEffect(() => {
         if (route?.params?.project)
             setProject(route.params.project)
-    }, [route?.params?.project])
+        if (route?.params?.newProject)
+            setNewProject(route.params.newProject)
+    }, [route?.params?.project, route?.params?.newProject])
 
     const renderProjectDetailStage = ({ item }) => (<ProjectDetailStage projectTasks={project?.tasks} stage={item} />)
 
     return (
         <Screen style={styles.screenStyle}>
             <View style={[styles.topImageContainer, { backgroundColor: project?.color ? project.color : Variables.colors.black.light100 }]}>
-                <View style={styles.projectIcon}>
-                    <Text style={styles.projectIconText}>PP</Text>
-                </View>
+                <Avatar style={styles.projectOwnerAvatar} imageUri={newProject ? avatarUrl : null} />
                 <View style={styles.teamContainer}>
                     {project?.team?.map((i, index) => (<Avatar
                         key={index}
@@ -84,13 +88,9 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
         justifyContent: 'space-between'
     },
-    projectIcon: {
-        backgroundColor: Variables.colors.white,
-        width: 40,
-        height: 40,
-        borderRadius: 10,
-        justifyContent: 'center',
-        alignItems: 'center'
+    projectOwnerAvatar: {
+        borderWidth: 2,
+        borderColor: Variables.colors.brand.default
     },
     projectIconText: {
         fontSize: 15,

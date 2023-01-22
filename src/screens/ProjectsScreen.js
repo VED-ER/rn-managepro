@@ -6,7 +6,7 @@ import ProjectsTabSelector from '../components/ProjectsTabSelector'
 import ProjectCard from '../components/ProjectCard'
 import { PROJECT_DETAILS } from '../navigations/routes'
 import { collection, db } from '../../firebase'
-import { getDocs } from 'firebase/firestore'
+import { getDocs, orderBy, query } from 'firebase/firestore'
 
 const recentProjectsDemo = [
     {
@@ -103,16 +103,17 @@ const ProjectsScreen = ({ navigation }) => {
     const [projects, setProjects] = useState([])
 
     const collectionRef = collection(db, 'projects')
+    const q = query(collectionRef, orderBy('createdAt', 'desc'))
 
     useEffect(() => {
         console.log('FETCHING ALL PROJECTS');
-        getDocs(collectionRef)
+        getDocs(q)
             .then(snapshot => {
-                const snapshotData = []
+                const projectsData = []
                 snapshot.docs.forEach(doc => {
-                    snapshotData.push({ ...doc.data(), id: doc.id })
+                    projectsData.push({ ...doc.data(), id: doc.id })
                 })
-                setProjects(snapshotData)
+                setProjects(projectsData)
             })
             .catch(err => {
                 Alert.alert(err.message)

@@ -6,6 +6,7 @@ export { default as CheckMarkSvgrepoCom } from "./CheckMarkSvgrepoCom";
 export { default as Close } from "./Close";
 export { default as Comment } from "./Comment";
 export { default as Edit } from "./Edit";
+export { default as Editproject } from "./Editproject";
 export { default as EyeSlash } from "./EyeSlash";
 export { default as Eye } from "./Eye";
 export { default as FacebookLogo } from "./FacebookLogo";

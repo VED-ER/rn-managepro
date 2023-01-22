@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/native'
 import { CREATE_PROJECT, PROJECT_DETAILS } from '../navigations/routes'
 import { Timestamp } from 'firebase/firestore'
 import { AuthContext } from '../store/AuthContext'
+import { addProjectToFirebase } from '../../firebase'
 
 const EMPTY_COMMENT = {
     id: null,
@@ -42,6 +43,7 @@ const EMPTY_PROJECT = {
 }
 
 const CreateProjectModal = () => {
+    const [loading, setLoading] = useState(false)
     const [showBottomSheet, setShowBottomSheet] = useState(false)
     const [project, setProject] = useState(EMPTY_PROJECT)
 
@@ -54,7 +56,7 @@ const CreateProjectModal = () => {
         Keyboard.dismiss()
     }
 
-    const onCreateWorkspacePress = () => {
+    const onCreateWorkspacePress = async () => {
 
         if (!project.name) {
             Alert.alert('Project name error', 'Please enter a name for your project')
@@ -70,13 +72,21 @@ const CreateProjectModal = () => {
             ...project,
             createdAt: Timestamp.now(),
             createdBy: {
-                name: currentUser.displayName,
-                photoURL: currentUser.photoURL,
-                id: currentUser.uid
+                userId: currentUser.uid
             }
         }
-        onDismiss()
-        navigation.navigate(PROJECT_DETAILS, { project: createdProject })
+
+        try {
+            setLoading(true)
+            await addProjectToFirebase(createdProject)
+
+            onDismiss()
+            navigation.navigate(PROJECT_DETAILS, { project: createdProject, newProject: true })
+        } catch (error) {
+            Alert.alert(error.message)
+        } finally {
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
@@ -105,7 +115,12 @@ const CreateProjectModal = () => {
                         value={project.type}
                         onChangeText={(value) => setProject(prev => ({ ...prev, type: value }))}
                     />
-                    <PrimaryButton text={'Create Workspace'} onPress={onCreateWorkspacePress} />
+                    <PrimaryButton
+                        loading={loading}
+                        disabled={loading}
+                        text={'Create Workspace'}
+                        onPress={onCreateWorkspacePress}
+                    />
                 </ScrollView>
             </BottomSheet>
         </>

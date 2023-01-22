@@ -12,8 +12,11 @@ const ProjectCard = ({ project, style, onPress }) => {
     const dueDateDate = convertFirebaseTimestampToDate(project?.dueDate)
 
     const formatedCreatedAt = format(createdAtDate, 'EEE, MMM dd')
-    const duration = intervalToDuration({ start: createdAtDate, end: dueDateDate })
-    const formatedDueDate = formatDuration(duration, { format: ['years', 'months', 'weeks', 'days'] })
+    let formatedDueDate
+    if (project?.dueDate) {
+        const duration = intervalToDuration({ start: createdAtDate, end: dueDateDate })
+        formatedDueDate = formatDuration(duration, { format: ['years', 'months', 'weeks', 'days'] })
+    }
 
     return (
         <Pressable
@@ -25,7 +28,7 @@ const ProjectCard = ({ project, style, onPress }) => {
                     <Text style={styles.projectIconText}>PP</Text>
                 </View>
                 <View style={styles.teamContainer}>
-                    {project?.team.map((i, index) => (<Avatar
+                    {project?.team?.map((i, index) => (<Avatar
                         key={index}
                         textStyle={{ fontSize: 10, color: Variables.colors.white }}
                         style={[styles.teamContainerAvatar, { marginLeft: index > 0 ? -5 : 0 }]}
@@ -47,7 +50,7 @@ const ProjectCard = ({ project, style, onPress }) => {
                 </View>
                 <View>
                     <View style={styles.tasksTextContainer}>
-                        <Text style={styles.tasksCompletedText}>{project?.tasksCompleted} / <Text style={styles.tasksLeftText} >{project?.tasks.length}</Text></Text>
+                        <Text style={styles.tasksCompletedText}>{project?.tasksCompleted} / <Text style={styles.tasksLeftText} >{project?.tasks?.length}</Text></Text>
                         <Text style={styles.tasksLeftText}>{`${formatedDueDate} left`}</Text>
                     </View>
                     <View style={styles.progressBar}>

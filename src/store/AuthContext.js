@@ -39,7 +39,7 @@ export const AuthContextProvider = ({ children }) => {
         return unsubscribe
     }, [])
     
-    console.log(JSON.stringify(currentUser,null,2));
+    // console.log(JSON.stringify(currentUser,null,2));
 
     const value = {
         currentUser,

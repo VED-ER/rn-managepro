@@ -38,12 +38,20 @@ if (getApps().length < 1) {
     db = getFirestore()
 }
 
+const projectsCollectionRef = collection(db, COLLECTIONS.PROJECTS)
+
+// for users
 const addUserToFirebase = async (data, docID) => {
     return setDoc(doc(db, COLLECTIONS.USERS, docID), data)
 }
 
 const updateUserCollection = async (data, docID) => {
     return updateDoc(doc(db, COLLECTIONS.USERS, docID), data)
+}
+
+// for projects
+const addProjectToFirebase = async (data) => {
+    return addDoc(projectsCollectionRef, data)
 }
 
 
@@ -54,5 +62,6 @@ export {
     db,
     collection,
     addUserToFirebase,
-    updateUserCollection
+    updateUserCollection,
+    addProjectToFirebase
 }
