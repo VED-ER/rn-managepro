@@ -54,6 +54,10 @@ const addProjectToFirebase = async (data) => {
     return addDoc(projectsCollectionRef, data)
 }
 
+const updateProjectsCollection = async (data, docID) => {
+    return updateDoc(doc(db, COLLECTIONS.PROJECTS, docID), data)
+}
+
 
 export {
     auth,
@@ -63,5 +67,6 @@ export {
     collection,
     addUserToFirebase,
     updateUserCollection,
-    addProjectToFirebase
+    addProjectToFirebase,
+    updateProjectsCollection
 }

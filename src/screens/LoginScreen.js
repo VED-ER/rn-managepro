@@ -11,6 +11,7 @@ import { AuthContext } from '../store/AuthContext'
 import downloadImage from '../utils/downloadImage'
 
 const LoginScreen = ({ navigation }) => {
+    const [loading, setLoading] = useState(false)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [secureTextEntry, setSecureTextEntry] = useState(true)
@@ -28,6 +29,7 @@ const LoginScreen = ({ navigation }) => {
 
     const onSignInPress = async () => {
         try {
+            setLoading(true)
             const user = await logIn(email, password)
             if (user.user?.photoURL) {
                 const img = await downloadImage(user.user?.photoURL)
@@ -37,6 +39,8 @@ const LoginScreen = ({ navigation }) => {
             navigation.reset({ index: 0, routes: [{ name: MAIN }] });
         } catch (error) {
             Alert.alert(error.message)
+        } finally {
+            setLoading(false)
         }
     }
 

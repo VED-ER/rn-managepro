@@ -1,4 +1,4 @@
-import { FlatList, Image, Platform, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
+import { Alert, FlatList, Image, Platform, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Variables } from '../styles/theme'
 import Avatar from '../components/Avatar'
@@ -9,10 +9,12 @@ import { AuthContext } from '../store/AuthContext'
 import ProjectOptionsModal from '../components/ProjectOptionsModal'
 import ProjectDetailsHeaderRight from '../components/header/ProjectDetailsHeaderRight'
 import ColorPickerModal from '../components/ColorPickerModal'
+import { updateProjectsCollection } from '../../firebase'
 
 const PROJECT_DETAILS_STAGES = [{ name: 'To Do' }, { name: 'In Progress' }, { name: 'Completed' }]
 
 const ProjectDetailsScreen = ({ route, navigation }) => {
+    const [loading, setLoading] = useState(false)
     const [newProject, setNewProject] = useState(false)
     const [project, setProject] = useState(null)
     const [tasks, setTasks] = useState([])
@@ -75,9 +77,21 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
         })
     }, [navigation])
 
-    const onSelectColor = (color) => {
+    const onSelectColor = async (color) => {
+        setLoading(true)
+        try {
+            await updateProjectsCollection({ color }, project.id)
+            setShowColorPicker(false)
+            setProject(prev => ({ ...prev, color }))
+        } catch (error) {
+            Alert.alert(error.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const onColorPickerModalDismiss = () => {
         setShowColorPicker(false)
-        setProject(prev => ({ ...prev, color }))
     }
 
     return (
@@ -119,7 +133,13 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
                     </View>
                 }
             </View>
-            <ColorPickerModal showModal={showColorPicker} onSelectColor={onSelectColor} value={project?.color} />
+            <ColorPickerModal
+                showModal={showColorPicker}
+                onSelectColor={onSelectColor}
+                value={project?.color}
+                loading={loading}
+                onDismiss={onColorPickerModalDismiss}
+            />
         </Screen>
     )
 }
