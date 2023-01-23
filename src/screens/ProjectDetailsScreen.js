@@ -19,6 +19,8 @@ import ImageColors from 'react-native-image-colors';
 import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator';
 import { StatusBar } from 'expo-status-bar';
 import CONFIG from '../data/config';
+import getImageDimensions from '../utils/getImageDimensions';
+import getImageColors from '../utils/getImageColors';
 
 const PROJECT_DETAILS_STAGES = [{ name: 'To Do' }, { name: 'In Progress' }, { name: 'Completed' }];
 
@@ -42,12 +44,6 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
     const headerHeight = useHeaderHeight();
     const topImageContainerHeight = 225 + headerHeight;
 
-    const getImgDimensions = async (uri) => {
-        return new Promise((resolve, reject) => {
-            Image.getSize(uri, (width, height) => resolve({ width, height }), () => reject('error'));
-        });
-    };
-
     useEffect(() => {
 
         const prepareCover = async () => {
@@ -55,7 +51,7 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
                 if (project?.coverImage) {
                     const img = await downloadImage(project?.coverImage);
                     const base64img = img.replace('data:application/octet-stream', 'data:image/png');
-                    const dim = await getImgDimensions(base64img);
+                    const dim = await getImageDimensions(base64img);
                     const manipResult = await manipulateAsync(
                         base64img,
                         [{
@@ -68,10 +64,9 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
                         }],
                         { base64: true }
                     );
-                    const res = await getImageColor(manipResult.uri);
+                    const res = await getImageColors(manipResult.uri);
                     const sbc = color(res.dominant).isLight() ? 'dark' : 'light';
                     setStatusBarColor(sbc);
-                    console.log(res.dominant);
                 }
             } catch (error) {
                 Alert.alert(error.message);
@@ -81,15 +76,6 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
             prepareCover();
 
     }, [project?.coverImage]);
-
-    const getImageColor = async (uri) => {
-        try {
-            const result = await ImageColors.getColors(uri);
-            return result;
-        } catch (e) {
-            Alert.alert(e.message);
-        }
-    };
 
     useEffect(() => {
         if (route?.params?.project)
@@ -111,6 +97,7 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
         });
     }, [navigation]);
 
+    // options functions
     const onSelectColor = async (color) => {
         setLoading(true);
         try {
@@ -255,7 +242,7 @@ export default ProjectDetailsScreen;
 const styles = StyleSheet.create({
     screenStyle: {
         paddingHorizontal: 0,
-        paddingVertical: Platform.OS === 'ios' ? 10 : 0
+        paddingVertical: 0
     },
     topImageContainer: {
         height: 225,
