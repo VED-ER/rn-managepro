@@ -1,77 +1,134 @@
-import { Alert, FlatList, Image, ImageBackground, Platform, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
-import React, { useContext, useEffect, useMemo, useState } from 'react'
-import { Variables } from '../styles/theme'
-import Avatar from '../components/Avatar'
-import ProjectDetailStage from '../components/ProjectDetailStage'
-import Screen from '../components/Screen'
-import { Addsquare, Colorswatch, Editoption, Editproject, Gallery, Notasksplaceholder, Trash } from '../components/svg'
-import { AuthContext } from '../store/AuthContext'
-import ProjectOptionsModal from '../components/ProjectOptionsModal'
-import ProjectDetailsHeaderRight from '../components/header/ProjectDetailsHeaderRight'
-import ColorPickerModal from '../components/ColorPickerModal'
-import { updateProjectsCollection } from '../../firebase'
+import { Alert, FlatList, Color, Image, ImageBackground, Platform, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { Variables } from '../styles/theme';
+import Avatar from '../components/Avatar';
+import ProjectDetailStage from '../components/ProjectDetailStage';
+import Screen from '../components/Screen';
+import { Addsquare, Colorswatch, Editoption, Editproject, Gallery, Notasksplaceholder, Trash } from '../components/svg';
+import { AuthContext } from '../store/AuthContext';
+import ProjectOptionsModal from '../components/ProjectOptionsModal';
+import ProjectDetailsHeaderRight from '../components/header/ProjectDetailsHeaderRight';
+import ColorPickerModal from '../components/ColorPickerModal';
+import { updateProjectsCollection } from '../../firebase';
+import downloadImage from '../utils/downloadImage';
 import * as ImagePicker from 'expo-image-picker';
-import downloadImage from '../utils/downloadImage'
-import uploadProjectCover from '../utils/uploadProjectCover'
+import uploadProjectCover from '../utils/uploadProjectCover';
+import { useHeaderHeight } from '@react-navigation/elements';
+import color from 'color';
+import ImageColors from 'react-native-image-colors';
+import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator';
+import { StatusBar } from 'expo-status-bar';
+import CONFIG from '../data/config';
 
-const PROJECT_DETAILS_STAGES = [{ name: 'To Do' }, { name: 'In Progress' }, { name: 'Completed' }]
+const PROJECT_DETAILS_STAGES = [{ name: 'To Do' }, { name: 'In Progress' }, { name: 'Completed' }];
 
 const ProjectDetailsScreen = ({ route, navigation }) => {
-    const [loading, setLoading] = useState(false)
-    const [newProject, setNewProject] = useState(false)
-    const [project, setProject] = useState(null)
-    const [tasks, setTasks] = useState([])
-    const [optionsModalVisible, setOptionsModalVisible] = useState(false)
-    const [showColorPicker, setShowColorPicker] = useState(false)
-    console.log(JSON.stringify(project, null, 2));
+    const [loading, setLoading] = useState(false);
+    const [newProject, setNewProject] = useState(false);
+    const [project, setProject] = useState(null);
+    const [tasks, setTasks] = useState([]);
+    const [optionsModalVisible, setOptionsModalVisible] = useState(false);
+    const [showColorPicker, setShowColorPicker] = useState(false);
 
-    const { currentUser, avatarUrl } = useContext(AuthContext)
+    const [statusBarColor, setStatusBarColor] = useState('light');
 
-    const { width } = useWindowDimensions()
+    const { currentUser, avatarUrl } = useContext(AuthContext);
 
-    const placeholderWidth = width > 350 ? 350 : width
-    const placeholderHeight = (placeholderWidth * 196) / 295
+    const { width } = useWindowDimensions();
 
+    const placeholderWidth = width > 350 ? 350 : width;
+    const placeholderHeight = (placeholderWidth * 196) / 295;
 
+    const headerHeight = useHeaderHeight();
+    const topImageContainerHeight = 225 + headerHeight;
+
+    const getImgDimensions = async (uri) => {
+        return new Promise((resolve, reject) => {
+            Image.getSize(uri, (width, height) => resolve({ width, height }), () => reject('error'));
+        });
+    };
+
+    useEffect(() => {
+
+        const prepareCover = async () => {
+            try {
+                if (project?.coverImage) {
+                    const img = await downloadImage(project?.coverImage);
+                    const base64img = img.replace('data:application/octet-stream', 'data:image/png');
+                    const dim = await getImgDimensions(base64img);
+                    const manipResult = await manipulateAsync(
+                        base64img,
+                        [{
+                            crop: {
+                                height: headerHeight,
+                                originX: 0,
+                                originY: 0,
+                                width: dim.width
+                            }
+                        }],
+                        { base64: true }
+                    );
+                    const res = await getImageColor(manipResult.uri);
+                    const sbc = color(res.dominant).isLight() ? 'dark' : 'light';
+                    setStatusBarColor(sbc);
+                    console.log(res.dominant);
+                }
+            } catch (error) {
+                Alert.alert(error.message);
+            }
+        };
+        if (!CONFIG.EXPO)
+            prepareCover();
+
+    }, [project?.coverImage]);
+
+    const getImageColor = async (uri) => {
+        try {
+            const result = await ImageColors.getColors(uri);
+            return result;
+        } catch (e) {
+            Alert.alert(e.message);
+        }
+    };
 
     useEffect(() => {
         if (route?.params?.project)
-            setProject(route.params.project)
+            setProject(route.params.project);
         if (route?.params?.newProject)
-            setNewProject(route.params.newProject)
-    }, [route?.params?.project, route?.params?.newProject])
+            setNewProject(route.params.newProject);
+    }, [route?.params?.project, route?.params?.newProject]);
 
-    const renderProjectDetailStage = ({ item }) => (<ProjectDetailStage projectTasks={project?.tasks} stage={item} />)
+    const renderProjectDetailStage = ({ item }) => (<ProjectDetailStage projectTasks={project?.tasks} stage={item} />);
 
     const onOptionsPress = () => {
-        setOptionsModalVisible(prev => (!prev))
-    }
+        setOptionsModalVisible(prev => (!prev));
+    };
 
     useEffect(() => {
         navigation.setOptions({
-            headerRight: () => <ProjectDetailsHeaderRight onOptionsPress={onOptionsPress} />
-        })
-    }, [navigation])
+            headerRight: () => <ProjectDetailsHeaderRight onOptionsPress={onOptionsPress} />,
+            headerTransparent: true
+        });
+    }, [navigation]);
 
     const onSelectColor = async (color) => {
-        setLoading(true)
+        setLoading(true);
         try {
             if (color !== project.color) {
-                console.log('in');
-                await updateProjectsCollection({ color }, project.id)
+                await updateProjectsCollection({ color }, project.id);
             }
-            setShowColorPicker(false)
-            setProject(prev => ({ ...prev, color }))
+            setShowColorPicker(false);
+            setProject(prev => ({ ...prev, color }));
         } catch (error) {
-            Alert.alert(error.message)
+            Alert.alert(error.message);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
     const onColorPickerModalDismiss = () => {
-        setShowColorPicker(false)
-    }
+        setShowColorPicker(false);
+    };
 
     const onChangeCoverPress = async () => {
         const { status, canAskAgain } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -89,18 +146,18 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
 
         if (!result.canceled) {
             try {
-                const photoURL = await uploadProjectCover(result.assets[0].uri, project)
+                const photoURL = await uploadProjectCover(result.assets[0].uri, project);
                 // const img = await downloadImage(photoURL)
                 // TODO: cache project cover images
 
-                await updateProjectsCollection({ coverImage: photoURL }, project.id)
-                setProject(prev => ({ ...prev, coverImage: photoURL }))
+                await updateProjectsCollection({ coverImage: photoURL }, project.id);
+                setProject(prev => ({ ...prev, coverImage: photoURL }));
             } catch (error) {
-                Alert.alert(error.message)
+                Alert.alert(error.message);
             }
         }
-        setOptionsModalVisible(false)
-    }
+        setOptionsModalVisible(false);
+    };
 
     const OPTION_ITEMS = useMemo(() => (
         [
@@ -121,8 +178,8 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
                 name: 'Color',
                 icon: <Colorswatch width={24} />,
                 onPress: () => {
-                    setShowColorPicker(true)
-                    setOptionsModalVisible(false)
+                    setShowColorPicker(true);
+                    setOptionsModalVisible(false);
                 }
             },
             {
@@ -130,66 +187,70 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
                 icon: <Trash width={24} />
             },
         ]
-    ), [])
+    ), []);
 
     return (
-        <Screen style={styles.screenStyle}>
-            {optionsModalVisible && <ProjectOptionsModal options={OPTION_ITEMS} />}
-            <ImageBackground
-                source={{ uri: project?.coverImage }}
-                resizeMode={'cover'}
-                style={[
-                    styles.topImageContainer,
-                    { backgroundColor: project?.color ? project.color : Variables.colors.black.light100 }
-                ]}
-            >
-                <Avatar style={styles.projectOwnerAvatar} imageUri={newProject ? avatarUrl : null} />
-                <View style={styles.teamContainer}>
-                    {project?.team?.map((i, index) => (<Avatar
-                        key={index}
-                        textStyle={styles.avatarTextStyle}
-                        style={[styles.teamAvatarStyle, { marginLeft: index > 0 ? -5 : 0 }]}
-                    />)
-                    )}
-                </View>
-            </ImageBackground>
-            <View style={styles.projectDetailsContainer}>
-                <View>
-                    <Text style={styles.projectTitle}>{project?.name}</Text>
-                    <Text style={styles.projectDescription}>{project?.description ? project.description : 'Add description'}</Text>
-                </View>
-                {tasks.length > 0
-                    ?
-                    <FlatList
-                        data={PROJECT_DETAILS_STAGES}
-                        renderItem={renderProjectDetailStage}
-                        keyExtractor={(item, index) => index}
-                        horizontal={true}
-                        showsHorizontalScrollIndicator={false}
-                        ItemSeparatorComponent={<View style={{ padding: 10 }} />}
-                        style={{ marginLeft: -10 }}
-                        contentContainerStyle={{ padding: 10 }}
-                    />
-                    :
-                    <View style={styles.noTasksPlaceholderContainer}>
-                        <Notasksplaceholder width={placeholderWidth} height={placeholderHeight} />
-                        <Text style={styles.noTasksPlaceholderTitle}>No tasks here yet</Text>
-                        <Text style={styles.noTasksPlaceholderSubtitle}>Add task first</Text>
+        <>
+            <StatusBar style={statusBarColor} />
+            <Screen style={styles.screenStyle}>
+                {optionsModalVisible && <ProjectOptionsModal options={OPTION_ITEMS} />}
+                <ImageBackground
+                    source={{ uri: project?.coverImage }}
+                    resizeMode={'cover'}
+                    style={[
+                        styles.topImageContainer,
+                        { height: topImageContainerHeight },
+                        { backgroundColor: project?.color ? project.color : Variables.colors.black.light100 }
+                    ]}
+                >
+                    <Avatar style={styles.projectOwnerAvatar} imageUri={newProject ? avatarUrl : null} />
+                    <View style={styles.teamContainer}>
+                        {project?.team?.map((i, index) => (<Avatar
+                            key={index}
+                            textStyle={styles.avatarTextStyle}
+                            style={[styles.teamAvatarStyle, { marginLeft: index > 0 ? -5 : 0 }]}
+                        />)
+                        )}
                     </View>
-                }
-            </View>
-            <ColorPickerModal
-                showModal={showColorPicker}
-                onSelectColor={onSelectColor}
-                value={project?.color}
-                loading={loading}
-                onDismiss={onColorPickerModalDismiss}
-            />
-        </Screen>
-    )
-}
+                </ImageBackground>
+                <View style={styles.projectDetailsContainer}>
+                    <View>
+                        <Text style={styles.projectTitle}>{project?.name}</Text>
+                        <Text style={styles.projectDescription}>{project?.description ? project.description : 'Add description'}</Text>
+                    </View>
+                    {tasks.length > 0
+                        ?
+                        <FlatList
+                            data={PROJECT_DETAILS_STAGES}
+                            renderItem={renderProjectDetailStage}
+                            keyExtractor={(item, index) => index}
+                            horizontal={true}
+                            showsHorizontalScrollIndicator={false}
+                            ItemSeparatorComponent={<View style={{ padding: 10 }} />}
+                            style={{ marginLeft: -10 }}
+                            contentContainerStyle={{ padding: 10 }}
+                        />
+                        :
+                        <View style={styles.noTasksPlaceholderContainer}>
+                            <Notasksplaceholder width={placeholderWidth} height={placeholderHeight} />
+                            <Text style={styles.noTasksPlaceholderTitle}>No tasks here yet</Text>
+                            <Text style={styles.noTasksPlaceholderSubtitle}>Add task first</Text>
+                        </View>
+                    }
+                </View>
+                <ColorPickerModal
+                    showModal={showColorPicker}
+                    onSelectColor={onSelectColor}
+                    value={project?.color}
+                    loading={loading}
+                    onDismiss={onColorPickerModalDismiss}
+                />
+            </Screen>
+        </>
+    );
+};
 
-export default ProjectDetailsScreen
+export default ProjectDetailsScreen;
 
 const styles = StyleSheet.create({
     screenStyle: {
@@ -260,4 +321,4 @@ const styles = StyleSheet.create({
         color: Variables.colors.black.light300,
         marginTop: 5
     }
-})
+});

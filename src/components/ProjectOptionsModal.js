@@ -1,11 +1,13 @@
-import { FlatList, Platform, Pressable, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { Addsquare, Addtask, Colorswatch, Editoption, Gallery, Trash } from './svg'
-import { Variables } from '../styles/theme'
-
+import { FlatList, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { Addsquare, Addtask, Colorswatch, Editoption, Gallery, Trash } from './svg';
+import { Variables } from '../styles/theme';
+import { useHeaderHeight } from '@react-navigation/elements';
 
 
 const ProjectOptionsModal = ({ options, style }) => {
+
+    const headerHeight = useHeaderHeight();
 
     const OptionItem = ({ item }) => (
         <Pressable
@@ -15,18 +17,18 @@ const ProjectOptionsModal = ({ options, style }) => {
             {item.icon}
             <Text style={styles.optionText}>{item.name}</Text>
         </Pressable>
-    )
+    );
 
     return (
-        <View style={[styles.container, style]}>
+        <View style={[styles.container, { top: headerHeight }, style]}>
             <View style={{ overflow: 'hidden', borderRadius: 20, borderTopRightRadius: 0 }}>
                 {options?.map(item => <OptionItem key={item.name} item={item} />)}
             </View>
         </View>
-    )
-}
+    );
+};
 
-export default ProjectOptionsModal
+export default ProjectOptionsModal;
 
 const styles = StyleSheet.create({
     container: {
@@ -49,4 +51,4 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         marginLeft: 15
     }
-})
+});

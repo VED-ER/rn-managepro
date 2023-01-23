@@ -77,7 +77,7 @@ const LoginScreen = ({ navigation }) => {
                             </Pressable>
                         </View>
                     </View>
-                    <SignInContainer onSignInPress={onSignInPress} />
+                    <SignInContainer loading={loading} onSignInPress={onSignInPress} />
                 </View>
             </ScrollView>
         </Screen>

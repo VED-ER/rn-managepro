@@ -7,12 +7,12 @@ import { Variables } from '../styles/theme'
 import { CREATE_ACCOUNT } from '../navigations/routes'
 import { useNavigation } from '@react-navigation/native'
 
-const SignInContainer = ({ onSignInPress }) => {
+const SignInContainer = ({ onSignInPress, loading }) => {
     const navigation = useNavigation()
 
     return (
         <View>
-            <PrimaryButton text={'Sign In'} onPress={onSignInPress} />
+            <PrimaryButton disabled={loading} text={'Sign In'} onPress={onSignInPress} />
             <View style={styles.buttonsContainer}>
                 <SecondaryButton
                     text={'Google'}
