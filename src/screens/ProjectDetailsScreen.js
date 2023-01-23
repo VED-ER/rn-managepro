@@ -8,6 +8,7 @@ import { Addsquare, Colorswatch, Editoption, Editproject, Gallery, Notasksplaceh
 import { AuthContext } from '../store/AuthContext';
 import ProjectOptionsModal from '../components/ProjectOptionsModal';
 import ProjectDetailsHeaderRight from '../components/header/ProjectDetailsHeaderRight';
+import BackButton from '../components/header/BackButton';
 import ColorPickerModal from '../components/ColorPickerModal';
 import { updateProjectsCollection } from '../../firebase';
 import downloadImage from '../utils/downloadImage';
@@ -16,7 +17,7 @@ import uploadProjectCover from '../utils/uploadProjectCover';
 import { useHeaderHeight } from '@react-navigation/elements';
 import color from 'color';
 import ImageColors from 'react-native-image-colors';
-import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator';
+import { manipulateAsync } from 'expo-image-manipulator';
 import { StatusBar } from 'expo-status-bar';
 import CONFIG from '../data/config';
 import getImageDimensions from '../utils/getImageDimensions';
@@ -38,6 +39,8 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
 
     const { width } = useWindowDimensions();
 
+    const headerIconsColor = statusBarColor === 'dark' ? Variables.colors.black.dark900 : Variables.colors.white
+
     const placeholderWidth = width > 350 ? 350 : width;
     const placeholderHeight = (placeholderWidth * 196) / 295;
 
@@ -46,7 +49,7 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
 
     useEffect(() => {
 
-        const prepareCover = async () => {
+        const getStatusBarColor = async () => {
             try {
                 if (project?.coverImage) {
                     const img = await downloadImage(project?.coverImage);
@@ -61,19 +64,21 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
                                 originY: 0,
                                 width: dim.width
                             }
-                        }],
-                        { base64: true }
+                        }]
                     );
                     const res = await getImageColors(manipResult.uri);
-                    const sbc = color(res.dominant).isLight() ? 'dark' : 'light';
+                    const imgColor = Platform.OS === 'android' ? res.dominant : res.background
+                    const sbc = color(imgColor).isLight() ? 'dark' : 'light';
                     setStatusBarColor(sbc);
                 }
             } catch (error) {
                 Alert.alert(error.message);
             }
         };
-        if (!CONFIG.EXPO)
-            prepareCover();
+        if (!CONFIG.EXPO) {
+            console.log('GETTING STATUS BAR COLOR');
+            getStatusBarColor();
+        }
 
     }, [project?.coverImage]);
 
@@ -92,10 +97,11 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
 
     useEffect(() => {
         navigation.setOptions({
-            headerRight: () => <ProjectDetailsHeaderRight onOptionsPress={onOptionsPress} />,
+            headerLeft: () => <BackButton iconColor={headerIconsColor} />,
+            headerRight: () => <ProjectDetailsHeaderRight iconColor={headerIconsColor} onOptionsPress={onOptionsPress} />,
             headerTransparent: true
         });
-    }, [navigation]);
+    }, [navigation, statusBarColor]);
 
     // options functions
     const onSelectColor = async (color) => {
