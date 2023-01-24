@@ -8,14 +8,11 @@ export const AuthContext = React.createContext({
     signUp: () => { },
     logIn: () => { },
     logOut: () => { },
-    loading: true,
-    avatarUrl: '',
-    setAvatarUrl: () => { }
+    loading: true
 })
 
 export const AuthContextProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState()
-    const [avatarUrl, setAvatarUrl] = useState('')
     const [loading, setLoading] = useState(true)
 
     const signUp = (email, password) => {
@@ -47,9 +44,7 @@ export const AuthContextProvider = ({ children }) => {
         signUp,
         logIn,
         logOut,
-        loading,
-        avatarUrl,
-        setAvatarUrl
+        loading
     }
 
     return (

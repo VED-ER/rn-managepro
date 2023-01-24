@@ -15,9 +15,9 @@ import { ACCOUNT_DETAILS, CREATE_ACCOUNT, CREATE_ACCOUNT_SUCCESS, CREATE_PROJECT
 import TabNavigator from "./TabNavigator";
 import * as SplashScreen from 'expo-splash-screen';
 import AccountDetailsScreen from "../screens/AccountDetailsScreen";
-import downloadImage from "../utils/downloadImage";
 import { Alert } from "react-native";
 import CreateProjectScreen from "../screens/CreateProjectScreen";
+import { GlobalContext } from "../store/GlobalContext";
 
 const Stack = createNativeStackNavigator();
 
@@ -52,9 +52,9 @@ const AppNavigator = ({ navigation }) => {
             <Stack.Screen
                 name={PROJECT_DETAILS}
                 component={ProjectDetailsScreen}
-                // options={{
-                //     headerRight: () => <ProjectDetailsHeaderRight />
-                // }}
+            // options={{
+            //     headerRight: () => <ProjectDetailsHeaderRight />
+            // }}
             />
             <Stack.Screen
                 name={ACCOUNT_DETAILS}
@@ -70,7 +70,8 @@ const AppNavigator = ({ navigation }) => {
 };
 
 const MainNavigator = () => {
-    const { currentUser, loading, setAvatarUrl } = useContext(AuthContext);
+    const { currentUser, loading } = useContext(AuthContext);
+    const { cacheImage } = useContext(GlobalContext)
 
     const navigation = useNavigation();
 
@@ -79,8 +80,7 @@ const MainNavigator = () => {
             if (currentUser) {
                 try {
                     if (currentUser?.photoURL) {
-                        const img = await downloadImage(currentUser.photoURL)
-                        setAvatarUrl(img)
+                        await cacheImage(currentUser.photoURL)
                     }
 
                     navigation.reset({ index: 0, routes: [{ name: MAIN }] });

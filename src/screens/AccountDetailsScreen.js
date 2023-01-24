@@ -8,14 +8,16 @@ import Avatar from '../components/Avatar';
 import { Variables } from '../styles/theme';
 import InputPrimary from '../components/InputPrimary';
 import { updateProfile } from 'firebase/auth';
-import downloadImage from '../utils/downloadImage';
 import { updateUserCollection } from '../../firebase';
 import { Edit } from '../components/svg';
+import { GlobalContext } from '../store/GlobalContext';
 
 const AccountDetailsScreen = () => {
-    const { currentUser, setCurrentUser, setAvatarUrl, avatarUrl } = useContext(AuthContext);
+    const { currentUser, setCurrentUser } = useContext(AuthContext);
     const [username, setUsername] = useState(currentUser.displayName);
     const [email, setEmail] = useState(currentUser.email);
+
+    const { cacheImage } = useContext(GlobalContext)
 
     const handleUploadAvatarPress = async () => {
 
@@ -36,8 +38,8 @@ const AccountDetailsScreen = () => {
         if (!result.canceled) {
             try {
                 const photoURL = await uploadAvatarAsync(result.assets[0].uri, currentUser)
-                const img = await downloadImage(photoURL)
-                setAvatarUrl(img)
+                await cacheImage(photoURL)
+
                 await updateProfile(currentUser, { photoURL })
 
                 setCurrentUser(user => ({ ...user, photoURL }))
@@ -53,7 +55,7 @@ const AccountDetailsScreen = () => {
         <Screen>
             <ScrollView>
                 <View style={styles.avatarContainer}>
-                    <Avatar imageUri={avatarUrl} style={styles.avatar} imageStyle={styles.avatarImage} />
+                    <Avatar imageUri={currentUser?.photoURL} style={styles.avatar} imageStyle={styles.avatarImage} />
                     <Pressable
                         onPress={handleUploadAvatarPress}
                         style={({ pressed }) => ([styles.avatarEditContainer, pressed && { opacity: 0.9 }])}

@@ -5,6 +5,7 @@ import { More } from './svg'
 import Avatar from './Avatar'
 import { format, formatDuration, intervalToDuration, parseISO } from 'date-fns'
 import convertFirebaseTimestampToDate from '../utils/convertFirebaseTimestampToDate'
+import CachedImageBackground from './CachedImageBackground'
 
 const ProjectCard = ({ project, style, onPress }) => {
 
@@ -23,9 +24,9 @@ const ProjectCard = ({ project, style, onPress }) => {
             onPress={onPress}
             style={({ pressed }) => ([styles.container, style, pressed && { opacity: 0.5 }])}
         >
-            <ImageBackground
+            <CachedImageBackground
                 imageStyle={styles.coverImage}
-                source={{ uri: project?.coverImage }}
+                source={{ uri: project?.coverImage ? project.coverImage : null }}
                 resizeMode={'cover'}
                 style={[styles.upperContainer, project?.color && { backgroundColor: project.color }]}
             >
@@ -40,7 +41,7 @@ const ProjectCard = ({ project, style, onPress }) => {
                     />)
                     )}
                 </View>
-            </ImageBackground>
+            </CachedImageBackground>
             <View style={styles.bottomContainer}>
                 <View>
                     <View style={styles.projectNameContainer}>

@@ -1,18 +1,24 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, View } from 'react-native'
 import React from 'react'
 import { Variables } from '../styles/theme'
+import CachedImage from './CachedImage'
 
 const Avatar = ({ style, imageUri, imageStyle }) => {
-
-    const source = imageUri ? { uri: imageUri } : require('../assets/defaultuser.png')
-
     return (
         <View style={[styles.container, style]}>
-            <Image
-                source={source}
-                style={[styles.image, imageStyle]}
-                resizeMode={'cover'}
-            />
+            {imageUri ?
+                <CachedImage
+                    source={{ uri: imageUri }}
+                    style={[styles.image, imageStyle]}
+                    resizeMode={'cover'}
+                />
+                :
+                <Image
+                    source={require('../assets/defaultuser.png')}
+                    style={[styles.image, imageStyle]}
+                    resizeMode={'cover'}
+                />
+            }
         </View>
     )
 }

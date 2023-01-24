@@ -18,7 +18,7 @@ import { CREATE_PROJECT, EMPTY_SCREEN, HOME, MESSAGE, PROFILE, PROJECTS } from "
 const Tab = createBottomTabNavigator()
 
 const TabNavigator = () => {
-    const { avatarUrl } = useContext(AuthContext)
+    const { currentUser } = useContext(AuthContext)
 
     return (
         <Tab.Navigator
@@ -37,7 +37,7 @@ const TabNavigator = () => {
                 component={HomeScreen}
                 options={{
                     headerLeft: () => <Logo style={{ marginLeft: 20 }} />,
-                    headerRight: () => <Avatar imageUri={avatarUrl} style={{ marginRight: 20 }} />,
+                    headerRight: () => <Avatar imageUri={currentUser?.photoURL} style={{ marginRight: 20 }} />,
                     tabBarIcon: ({ color, size }) => (<Hometab width={size} height={size} color={color} />)
                 }}
             />
@@ -75,7 +75,7 @@ const TabNavigator = () => {
                 component={ProfileScreen}
                 options={{
                     tabBarIcon: ({ color, focused }) => (
-                        <Avatar imageUri={avatarUrl} style={{ width: 30, height: 30, borderColor: color, borderWidth: focused ? 2 : 0 }} />
+                        <Avatar imageUri={currentUser?.photoURL} style={{ width: 30, height: 30, borderColor: color, borderWidth: focused ? 2 : 0 }} />
                     ),
                 }}
             />

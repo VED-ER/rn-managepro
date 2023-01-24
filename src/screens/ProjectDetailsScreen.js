@@ -11,7 +11,6 @@ import ProjectDetailsHeaderRight from '../components/header/ProjectDetailsHeader
 import BackButton from '../components/header/BackButton';
 import ColorPickerModal from '../components/ColorPickerModal';
 import { updateProjectsCollection } from '../../firebase';
-import downloadImage from '../utils/downloadImage';
 import * as ImagePicker from 'expo-image-picker';
 import uploadProjectCover from '../utils/uploadProjectCover';
 import { useHeaderHeight } from '@react-navigation/elements';
@@ -22,6 +21,8 @@ import { StatusBar } from 'expo-status-bar';
 import CONFIG from '../data/config';
 import getImageDimensions from '../utils/getImageDimensions';
 import getImageColors from '../utils/getImageColors';
+import CachedImageBackground from '../components/CachedImageBackground';
+import { GlobalContext } from '../store/GlobalContext';
 
 const PROJECT_DETAILS_STAGES = [{ name: 'To Do' }, { name: 'In Progress' }, { name: 'Completed' }];
 
@@ -33,9 +34,10 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
     const [optionsModalVisible, setOptionsModalVisible] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
 
-    const [statusBarColor, setStatusBarColor] = useState('light');
+    const [statusBarColor, setStatusBarColor] = useState('dark');
 
-    const { currentUser, avatarUrl } = useContext(AuthContext);
+    const { currentUser } = useContext(AuthContext);
+    const { cacheImage } = useContext(GlobalContext)
 
     const { width } = useWindowDimensions();
 
@@ -52,7 +54,7 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
         const getStatusBarColor = async () => {
             try {
                 if (project?.coverImage) {
-                    const img = await downloadImage(project?.coverImage);
+                    const img = await cacheImage(project?.coverImage);
                     const base64img = img.replace('data:application/octet-stream', 'data:image/png');
                     const dim = await getImageDimensions(base64img);
                     const manipResult = await manipulateAsync(
@@ -140,7 +142,7 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
         if (!result.canceled) {
             try {
                 const photoURL = await uploadProjectCover(result.assets[0].uri, project);
-                // const img = await downloadImage(photoURL)
+                await cacheImage(photoURL)
                 // TODO: cache project cover images
 
                 await updateProjectsCollection({ coverImage: photoURL }, project.id);
@@ -187,7 +189,7 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
             <StatusBar style={statusBarColor} />
             <Screen style={styles.screenStyle}>
                 {optionsModalVisible && <ProjectOptionsModal options={OPTION_ITEMS} />}
-                <ImageBackground
+                <CachedImageBackground
                     source={{ uri: project?.coverImage }}
                     resizeMode={'cover'}
                     style={[
@@ -196,7 +198,7 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
                         { backgroundColor: project?.color ? project.color : Variables.colors.black.light100 }
                     ]}
                 >
-                    <Avatar style={styles.projectOwnerAvatar} imageUri={newProject ? avatarUrl : null} />
+                    <Avatar style={styles.projectOwnerAvatar} imageUri={newProject ? currentUser?.photoURL : null} />
                     <View style={styles.teamContainer}>
                         {project?.team?.map((i, index) => (<Avatar
                             key={index}
@@ -205,7 +207,7 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
                         />)
                         )}
                     </View>
-                </ImageBackground>
+                </CachedImageBackground>
                 <View style={styles.projectDetailsContainer}>
                     <View>
                         <Text style={styles.projectTitle}>{project?.name}</Text>

@@ -8,7 +8,7 @@ import Checkbox from '../components/Checkbox'
 import SignInContainer from '../components/SignInContainer'
 import { FORGOT_PASSWORD, MAIN } from '../navigations/routes'
 import { AuthContext } from '../store/AuthContext'
-import downloadImage from '../utils/downloadImage'
+import { GlobalContext } from '../store/GlobalContext'
 
 const LoginScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(false)
@@ -17,7 +17,8 @@ const LoginScreen = ({ navigation }) => {
     const [secureTextEntry, setSecureTextEntry] = useState(true)
     const [rememberMe, setRememberMe] = useState(false)
 
-    const { logIn, setAvatarUrl } = useContext(AuthContext)
+    const { logIn } = useContext(AuthContext)
+    const { cacheImage } = useContext(GlobalContext)
 
     const onIconRightPress = () => {
         setSecureTextEntry(!secureTextEntry)
@@ -31,10 +32,8 @@ const LoginScreen = ({ navigation }) => {
         try {
             setLoading(true)
             const user = await logIn(email, password)
-            if (user.user?.photoURL) {
-                const img = await downloadImage(user.user?.photoURL)
-                setAvatarUrl(img)
-            }
+            if (user.user?.photoURL)
+                await cacheImage(user.user.photoURL)
 
             navigation.reset({ index: 0, routes: [{ name: MAIN }] });
         } catch (error) {

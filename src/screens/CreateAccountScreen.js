@@ -10,7 +10,7 @@ import { addUserToFirebase } from '../../firebase';
 import Avatar from '../components/Avatar';
 import * as ImagePicker from 'expo-image-picker';
 import uploadAvatarAsync from '../utils/uploadAvatarAsync';
-import downloadImage from '../utils/downloadImage';
+import { GlobalContext } from '../store/GlobalContext';
 
 const CreateAccountScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
@@ -19,7 +19,8 @@ const CreateAccountScreen = ({ navigation }) => {
     const [selectedAvatar, setSelectedAvatar] = useState('')
     const [loading, setLoading] = useState(false)
 
-    const { signUp, setAvatarUrl, setCurrentUser } = useContext(AuthContext);
+    const { signUp, setCurrentUser } = useContext(AuthContext);
+    const { cacheImage } = useContext(GlobalContext)
 
     const handleCreateAccountPress = async () => {
 
@@ -56,10 +57,9 @@ const CreateAccountScreen = ({ navigation }) => {
             )
 
             // downloading an avatar
-            if (selectedAvatar) {
-                const img = await downloadImage(photoURL)
-                setAvatarUrl(img)
-            }
+            if (selectedAvatar)
+                await cacheImage(photoURL)
+
 
             navigation.navigate(CREATE_ACCOUNT_SUCCESS);
 

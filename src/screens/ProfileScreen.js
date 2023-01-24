@@ -10,13 +10,12 @@ import { AuthContext } from '../store/AuthContext'
 import { ACCOUNT_DETAILS, LOGIN, ONBOARDING } from '../navigations/routes'
 
 const ProfileScreen = ({ navigation }) => {
-    const { logOut, setAvatarUrl, avatarUrl, currentUser, setCurrentUser } = useContext(AuthContext)
+    const { logOut, currentUser, setCurrentUser } = useContext(AuthContext)
 
     const handleLogOut = async () => {
         try {
             await logOut()
             navigation.reset({ index: 1, routes: [{ name: ONBOARDING }, { name: LOGIN }] })
-            setAvatarUrl('')
             setCurrentUser(null)
         } catch (error) {
             Alert.alert(error.message)
@@ -33,7 +32,7 @@ const ProfileScreen = ({ navigation }) => {
 
     return (
         <Screen style={{ paddingVertical: 20 }}>
-            <Avatar style={styles.avatarStyle} textStyle={styles.avatarText} imageUri={avatarUrl} />
+            <Avatar style={styles.avatarStyle} textStyle={styles.avatarText} imageUri={currentUser?.photoURL} />
             <Text style={styles.title}>{currentUser?.displayName}</Text>
             <Text style={styles.roleText}>Free member</Text>
             <PrimaryButton
