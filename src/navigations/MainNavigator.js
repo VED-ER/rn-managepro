@@ -11,13 +11,14 @@ import LoginScreen from "../screens/LoginScreen";
 import OnboardingScreen from "../screens/OnboardingScreen";
 import ProjectDetailsScreen from "../screens/ProjectDetailsScreen";
 import { AuthContext } from "../store/AuthContext";
-import { ACCOUNT_DETAILS, CREATE_ACCOUNT, CREATE_ACCOUNT_SUCCESS, CREATE_PROJECT, FORGOT_PASSWORD, LOGIN, MAIN, ONBOARDING, PROJECT_DETAILS, TAB } from "./routes";
+import { ACCOUNT_DETAILS, CREATE_ACCOUNT, CREATE_ACCOUNT_SUCCESS, CREATE_PROJECT, EDIT_PROJECT, FORGOT_PASSWORD, LOGIN, MAIN, ONBOARDING, PROJECT_DETAILS, TAB } from "./routes";
 import TabNavigator from "./TabNavigator";
 import * as SplashScreen from 'expo-splash-screen';
 import AccountDetailsScreen from "../screens/AccountDetailsScreen";
 import { Alert } from "react-native";
 import CreateProjectScreen from "../screens/CreateProjectScreen";
 import { GlobalContext } from "../store/GlobalContext";
+import EditProjectScreen from "../screens/EditProjectScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -55,6 +56,10 @@ const AppNavigator = ({ navigation }) => {
             // options={{
             //     headerRight: () => <ProjectDetailsHeaderRight />
             // }}
+            />
+            <Stack.Screen
+                name={EDIT_PROJECT}
+                component={EditProjectScreen}
             />
             <Stack.Screen
                 name={ACCOUNT_DETAILS}
