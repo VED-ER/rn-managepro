@@ -16,10 +16,8 @@ const CachedImageBackground = ({ source, children, ...props }) => {
     useEffect(() => {
         if (cachedImages[uri]) {
             setImageSource({ uri: cachedImages[uri] })
-            console.log('IMG ALREADY CACHED');
         } else {
             if (uri) {
-                console.log('fetching image');
                 downloadAndCacheImage()
             }
         }

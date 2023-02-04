@@ -11,7 +11,7 @@ import LoginScreen from "../screens/LoginScreen";
 import OnboardingScreen from "../screens/OnboardingScreen";
 import ProjectDetailsScreen from "../screens/ProjectDetailsScreen";
 import { AuthContext } from "../store/AuthContext";
-import { ACCOUNT_DETAILS, CREATE_ACCOUNT, CREATE_ACCOUNT_SUCCESS, CREATE_PROJECT, EDIT_PROJECT, FORGOT_PASSWORD, LOGIN, MAIN, ONBOARDING, PROJECT_DETAILS, TAB } from "./routes";
+import { ACCOUNT_DETAILS, CREATE_ACCOUNT, CREATE_ACCOUNT_SUCCESS, CREATE_PROJECT, EDIT_PROJECT, FORGOT_PASSWORD, LOGIN, MAIN, ONBOARDING, PROJECT_DETAILS, TAB, TEAM } from "./routes";
 import TabNavigator from "./TabNavigator";
 import * as SplashScreen from 'expo-splash-screen';
 import AccountDetailsScreen from "../screens/AccountDetailsScreen";
@@ -19,13 +19,13 @@ import { Alert } from "react-native";
 import CreateProjectScreen from "../screens/CreateProjectScreen";
 import { GlobalContext } from "../store/GlobalContext";
 import EditProjectScreen from "../screens/EditProjectScreen";
+import TeamScreen from "../screens/TeamScreen";
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = ({ navigation }) => {
 
     useFocusEffect(useCallback(() => {
-        console.log('In TRANSITION END USE EFFECT');
         const unsubscribe = navigation.addListener('transitionEnd', (e) => {
             SplashScreen.hideAsync();
         });
@@ -60,6 +60,10 @@ const AppNavigator = ({ navigation }) => {
             <Stack.Screen
                 name={EDIT_PROJECT}
                 component={EditProjectScreen}
+            />
+            <Stack.Screen
+                name={TEAM}
+                component={TeamScreen}
             />
             <Stack.Screen
                 name={ACCOUNT_DETAILS}

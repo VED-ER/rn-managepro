@@ -9,7 +9,7 @@ const SvgAddsquare = (props) => (
   >
     <Path
       d="M8 12h8M12 16V8M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7Z"
-      stroke="#04060F"
+      stroke={props.color}
       strokeWidth={1.5}
       strokeLinecap="round"
       strokeLinejoin="round"

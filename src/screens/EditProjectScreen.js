@@ -12,20 +12,28 @@ import DatePicker from '../components/DatePicker'
 import { format } from 'date-fns'
 import { updateProjectsCollection } from '../../firebase'
 import { Timestamp } from 'firebase/firestore'
+import { PROJECT_DETAILS, TEAM } from '../navigations/routes'
 
 const EditProjectScreen = ({ navigation, route }) => {
+    const [currentProjectState, setCurrentProjectState] = useState()
     const [project, setProject] = useState()
     const [dueDate, setDueDate] = useState(null)
-    const [team, setTeam] = useState(null)
     const [showBottomSheet, setShowBottomSheet] = useState(false)
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-        if (route?.params?.project)
+        if (route?.params?.project) {
             setProject(route.params.project)
+            setCurrentProjectState(route.params.project)
+        }
     }, [route?.params?.project])
 
-    console.log(JSON.stringify(project, null, 2));
+    useEffect(() => {
+        if (route?.params?.team) {
+            setProject(prev => ({ ...prev, team: route.params.team }))
+        }
+    }, [route?.params?.team])
+
     const onDueDatePress = () => {
         setShowBottomSheet(true)
     }
@@ -33,17 +41,19 @@ const EditProjectScreen = ({ navigation, route }) => {
     const onSelectedDate = (date) => {
         setShowBottomSheet(false)
         setDueDate(date)
+        setProject(prev => ({ ...prev, dueDate: Timestamp.fromDate(date) }))
     }
 
     const onSaveChangesPress = async () => {
+        if (JSON.stringify(currentProjectState) === JSON.stringify(project)) return
+        console.log('SAVIng');
         setLoading(true);
         try {
-            // TODO: prevent updating the collection if the data is the same (if no changes were done)
-            // navigate back with new project data
-            const updatedProject = { ...project, dueDate: dueDate ? Timestamp.fromDate(dueDate) : null }
+            const updatedProject = { ...project }
             delete updatedProject.id
             await updateProjectsCollection(updatedProject, project.id);
 
+            navigation.navigate(PROJECT_DETAILS, { project })
         } catch (error) {
             Alert.alert(error.message);
         } finally {
@@ -53,6 +63,10 @@ const EditProjectScreen = ({ navigation, route }) => {
 
     const onBottomSheetDismiss = () => {
         setShowBottomSheet(false)
+    }
+
+    const onTeamPress = () => {
+        navigation.navigate(TEAM, { project })
     }
 
     return (
@@ -80,8 +94,9 @@ const EditProjectScreen = ({ navigation, route }) => {
                 />
                 <InputPrimaryPressable
                     placeholder={'Team'}
-                    value={project?.team}
+                    value={JSON.stringify(project?.team)}
                     style={{ marginBottom: 30 }}
+                    onPress={onTeamPress}
                 />
             </View>
             <PrimaryButton
