@@ -6,7 +6,7 @@ import ProjectsTabSelector from '../components/ProjectsTabSelector'
 import ProjectCard from '../components/ProjectCard'
 import { PROJECT_DETAILS } from '../navigations/routes'
 import { collection, db } from '../../firebase'
-import { getDocs, orderBy, query } from 'firebase/firestore'
+import { getDocs, onSnapshot, orderBy, query } from 'firebase/firestore'
 
 const recentProjectsDemo = [
     {
@@ -106,18 +106,17 @@ const ProjectsScreen = ({ navigation }) => {
     const q = query(collectionRef, orderBy('createdAt', 'desc'))
 
     useEffect(() => {
-        console.log('FETCHING ALL PROJECTS');
-        getDocs(q)
-            .then(snapshot => {
-                const projectsData = []
-                snapshot.docs.forEach(doc => {
-                    projectsData.push({ ...doc.data(), id: doc.id })
-                })
-                setProjects(projectsData)
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const projectsData = []
+            snapshot.docs.forEach(doc => {
+                projectsData.push({ ...doc.data(), id: doc.id })
             })
-            .catch(err => {
-                Alert.alert(err.message)
-            })
+            setProjects(projectsData)
+        }, (error) => {
+            Alert.alert(error.message)
+        })
+
+        return unsubscribe
     }, [])
 
     const onTabPress = (tab) => {
@@ -140,7 +139,7 @@ const ProjectsScreen = ({ navigation }) => {
                 renderItem={renderProjectCard}
                 keyExtractor={keyExtractor}
                 // style={{ padding: 20 }}
-                contentContainerStyle={{ paddingBottom: 40, padding:20 }}
+                contentContainerStyle={{ paddingBottom: 40, padding: 20 }}
                 ItemSeparatorComponent={<View style={{ padding: 10 }} />}
             />
         </Screen>

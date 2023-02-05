@@ -4,7 +4,7 @@ import { getAuth, initializeAuth } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getReactNativePersistence } from 'firebase/auth/react-native';
 import { REACT_APP_FIREBASE_API_KEY, REACT_APP_FIREBASE_AUTH_DOMAIN, REACT_APP_FIREBASE_PROJECT_ID, REACT_APP_FIREBASE_STORAGE_BUCKET, REACT_APP_FIREBASE_MESSAGING_SENDER_ID, REACT_APP_FIREBASE_APP_ID } from '@env'
-import { collection, getFirestore, Timestamp, addDoc, setDoc, doc, updateDoc, initializeFirestore, query, where, getDocs, orderBy, limit, startAfter } from "firebase/firestore"
+import { collection, getFirestore, Timestamp, addDoc, setDoc, doc, updateDoc, initializeFirestore, query, where, getDocs, orderBy, limit, startAfter, deleteDoc } from "firebase/firestore"
 import { Alert } from "react-native";
 
 const firebaseConfig = {
@@ -78,6 +78,10 @@ const updateProjectsCollection = async (data, docID) => {
     return updateDoc(doc(db, COLLECTIONS.PROJECTS, docID), data)
 }
 
+const deleteProject = async (docID) => {
+    return deleteDoc(doc(db, COLLECTIONS.PROJECTS, docID))
+}
+
 
 export {
     auth,
@@ -90,5 +94,6 @@ export {
     searchUsers,
     getUsers,
     addProjectToFirebase,
-    updateProjectsCollection
+    updateProjectsCollection,
+    deleteProject
 }

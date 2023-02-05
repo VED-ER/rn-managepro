@@ -10,7 +10,7 @@ import ProjectOptionsModal from '../components/ProjectOptionsModal';
 import ProjectDetailsHeaderRight from '../components/header/ProjectDetailsHeaderRight';
 import BackButton from '../components/header/BackButton';
 import ColorPickerModal from '../components/ColorPickerModal';
-import { updateProjectsCollection } from '../../firebase';
+import { deleteProject, updateProjectsCollection } from '../../firebase';
 import * as ImagePicker from 'expo-image-picker';
 import uploadProjectCover from '../utils/uploadProjectCover';
 import { useHeaderHeight } from '@react-navigation/elements';
@@ -166,10 +166,19 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
         setOptionsModalVisible(false);
     }
 
+    const onDeletePress = async () => {
+        try {
+            await deleteProject(project.id)
+            navigation.goBack()
+        } catch (error) {
+            Alert.alert(error.message)
+        }
+    }
+
     const OPTION_ITEMS = [
         {
             name: 'Add Task',
-            icon: <Addsquare width={24} />
+            icon: <Addsquare width={24} color={Variables.colors.black.dark900} />
         },
         {
             name: 'Change Cover',
@@ -188,7 +197,8 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
         },
         {
             name: 'Delete',
-            icon: <Trash width={24} />
+            icon: <Trash width={24} />,
+            onPress: onDeletePress
         },
     ]
 
