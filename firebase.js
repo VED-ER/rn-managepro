@@ -89,6 +89,7 @@ export {
     Timestamp,
     db,
     collection,
+    usersCollectionRef,
     addUserToFirebase,
     updateUserCollection,
     searchUsers,

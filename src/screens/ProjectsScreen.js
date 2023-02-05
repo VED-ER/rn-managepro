@@ -1,12 +1,13 @@
 import { Alert, FlatList, StyleSheet, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Screen from '../components/Screen'
 import { Variables } from '../styles/theme'
 import ProjectsTabSelector from '../components/ProjectsTabSelector'
 import ProjectCard from '../components/ProjectCard'
 import { PROJECT_DETAILS } from '../navigations/routes'
 import { collection, db } from '../../firebase'
-import { getDocs, onSnapshot, orderBy, query } from 'firebase/firestore'
+import { documentId, getDocs, onSnapshot, orderBy, query, where } from 'firebase/firestore'
+import { GlobalContext } from '../store/GlobalContext'
 
 const recentProjectsDemo = [
     {
@@ -102,6 +103,8 @@ const ProjectsScreen = ({ navigation }) => {
     const [activeTab, setActiveTab] = useState({ name: 'To Do' })
     const [projects, setProjects] = useState([])
 
+    const { setUsersIds, users } = useContext(GlobalContext)
+
     const collectionRef = collection(db, 'projects')
     const q = query(collectionRef, orderBy('createdAt', 'desc'))
 
@@ -112,6 +115,19 @@ const ProjectsScreen = ({ navigation }) => {
                 projectsData.push({ ...doc.data(), id: doc.id })
             })
             setProjects(projectsData)
+
+            const projectsUsers = []
+            projectsData.forEach(project => {
+                if (project?.team) {
+                    project.team.forEach(userID => {
+                        projectsUsers.push(userID)
+                    })
+                }
+                if (project?.createdBy) {
+                    projectsUsers.push(project.createdBy?.userId)
+                }
+            })
+            setUsersIds(prevIds => ([... new Set([...prevIds, ...projectsUsers])]))
         }, (error) => {
             Alert.alert(error.message)
         })
@@ -123,12 +139,29 @@ const ProjectsScreen = ({ navigation }) => {
         setActiveTab(tab)
     }
 
-    const renderProjectCard = ({ item }) => (<ProjectCard project={item} onPress={onProjectCardPress.bind(this, item)} />)
+    const renderProjectCard = ({ item }) => {
+        const teamUsers = []
+        if (item?.team) {
+            item.team.forEach(userID => {
+                const user = users.find(user => user.id === userID)
+                if (user)
+                    teamUsers.push(user)
+            })
+        }
+        const createdBy = users.find(user => user.id === item.createdBy.userId)
+
+        return <ProjectCard
+            project={item}
+            team={teamUsers}
+            createdBy={createdBy}
+            onPress={onProjectCardPress.bind(this, item, teamUsers, createdBy)}
+        />
+    }
 
     const keyExtractor = (item) => item.id
 
-    const onProjectCardPress = (project) => {
-        navigation.navigate(PROJECT_DETAILS, { project })
+    const onProjectCardPress = (project, teamUsers, createdBy) => {
+        navigation.navigate(PROJECT_DETAILS, { project, teamUsers, createdBy })
     }
 
     return (

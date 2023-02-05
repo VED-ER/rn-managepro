@@ -7,7 +7,7 @@ import { format, formatDuration, intervalToDuration, parseISO } from 'date-fns'
 import convertFirebaseTimestampToDate from '../utils/convertFirebaseTimestampToDate'
 import CachedImageBackground from './CachedImageBackground'
 
-const ProjectCard = ({ project, style, onPress }) => {
+const ProjectCard = ({ project, team, style, onPress, createdBy }) => {
 
     const createdAtDate = convertFirebaseTimestampToDate(project?.createdAt)
     const dueDateDate = convertFirebaseTimestampToDate(project?.dueDate)
@@ -31,10 +31,11 @@ const ProjectCard = ({ project, style, onPress }) => {
                 style={[styles.upperContainer, project?.color && { backgroundColor: project.color }]}
             >
                 <View style={styles.projectIcon}>
-                    <Text style={styles.projectIconText}>PP</Text>
+                    <Avatar imageUri={createdBy?.photoURL} />
                 </View>
                 <View style={styles.teamContainer}>
-                    {project?.team?.map((i, index) => (<Avatar
+                    {team?.map((user, index) => (<Avatar
+                        imageUri={user?.photoURL}
                         key={index}
                         textStyle={{ fontSize: 10, color: Variables.colors.white }}
                         style={[styles.teamContainerAvatar, { marginLeft: index > 0 ? -5 : 0 }]}
@@ -100,7 +101,8 @@ const styles = StyleSheet.create({
         height: 32,
         borderRadius: 10,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        overflow:'hidden'
     },
     projectIconText: {
         fontSize: 12,

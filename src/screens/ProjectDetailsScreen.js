@@ -34,6 +34,7 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
     const [tasks, setTasks] = useState([]);
     const [optionsModalVisible, setOptionsModalVisible] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
+    const [team, setTeam] = useState([])
 
     const [statusBarColor, setStatusBarColor] = useState('dark');
 
@@ -91,6 +92,11 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
         if (route?.params?.newProject)
             setNewProject(route.params.newProject);
     }, [route?.params?.project, route?.params?.newProject]);
+
+    useEffect(() => {
+        if (route?.params?.teamUsers)
+            setTeam(route.params.teamUsers)
+    }, [route?.params?.teamUsers])
 
     const renderProjectDetailStage = ({ item }) => (<ProjectDetailStage projectTasks={project?.tasks} stage={item} />);
 
@@ -217,9 +223,10 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
                         { backgroundColor: project?.color ? project.color : Variables.colors.black.light100 }
                     ]}
                 >
-                    <Avatar style={styles.projectOwnerAvatar} imageUri={newProject ? currentUser?.photoURL : null} />
+                    <Avatar style={styles.projectOwnerAvatar} imageUri={route?.params?.createdBy ? route.params.createdBy?.photoURL : null} />
                     <View style={styles.teamContainer}>
-                        {project?.team?.map((i, index) => (<Avatar
+                        {team?.map((user, index) => (<Avatar
+                            imageUri={user?.photoURL}
                             key={index}
                             textStyle={styles.avatarTextStyle}
                             style={[styles.teamAvatarStyle, { marginLeft: index > 0 ? -5 : 0 }]}
