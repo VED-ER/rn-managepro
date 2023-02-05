@@ -1,5 +1,5 @@
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import Screen from '../components/Screen'
 import { Variables } from '../styles/theme'
 import InputPrimary from '../components/InputPrimary'
@@ -13,6 +13,8 @@ import { format } from 'date-fns'
 import { updateProjectsCollection } from '../../firebase'
 import { Timestamp } from 'firebase/firestore'
 import { PROJECT_DETAILS, TEAM } from '../navigations/routes'
+import { GlobalContext } from '../store/GlobalContext'
+import convertFirebaseTimestampToDate from '../utils/convertFirebaseTimestampToDate'
 
 const EditProjectScreen = ({ navigation, route }) => {
     const [currentProjectState, setCurrentProjectState] = useState()
@@ -21,10 +23,13 @@ const EditProjectScreen = ({ navigation, route }) => {
     const [showBottomSheet, setShowBottomSheet] = useState(false)
     const [loading, setLoading] = useState(false)
 
+    const { users } = useContext(GlobalContext)
+
     useEffect(() => {
         if (route?.params?.project) {
             setProject(route.params.project)
             setCurrentProjectState(route.params.project)
+            setDueDate(convertFirebaseTimestampToDate(route.params.project?.dueDate))
         }
     }, [route?.params?.project])
 
@@ -53,7 +58,16 @@ const EditProjectScreen = ({ navigation, route }) => {
             delete updatedProject.id
             await updateProjectsCollection(updatedProject, project.id);
 
-            navigation.navigate(PROJECT_DETAILS, { project })
+            const teamUsers = []
+            if (project?.team) {
+                project.team.forEach(userID => {
+                    const user = users.find(user => user.id === userID)
+                    if (user)
+                        teamUsers.push(user)
+                })
+            }
+            console.log(teamUsers);
+            navigation.navigate(PROJECT_DETAILS, { project, teamUsers })
         } catch (error) {
             Alert.alert(error.message);
         } finally {
@@ -116,7 +130,7 @@ const EditProjectScreen = ({ navigation, route }) => {
                             <Close width={20} height={20} />
                         </Pressable>
                     </View>
-                    <DatePicker onSelectedDate={onSelectedDate} />
+                    <DatePicker selectedDate={project?.dueDate} onSelectedDate={onSelectedDate} />
                 </BottomSheet>
             </Portal>
         </Screen>

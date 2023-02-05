@@ -3,9 +3,8 @@ import React, { useState } from 'react'
 import { format, isToday } from 'date-fns';
 import { Variables } from '../styles/theme';
 
-const DatePickerDate = ({ date, isCurrentMonthDay, onPress }) => {
+const DatePickerDate = ({ date, isCurrentMonthDay, onPress, isSelected }) => {
     const [height, setHeight] = useState(50)
-    const today = isToday(date);
 
     const onLayout = (event) => {
         setHeight(event.nativeEvent.layout.width);
@@ -21,8 +20,8 @@ const DatePickerDate = ({ date, isCurrentMonthDay, onPress }) => {
             onPress={() => onPress(date)}
             onLayout={onLayout}
         >
-            <View style={today ? styles.activeDay : {}}>
-                <Text style={today ? styles.dayNumberActive : styles.dayNumber}>{format(date, "d")}</Text>
+            <View style={isSelected ? styles.activeDay : {}}>
+                <Text style={isSelected ? styles.dayNumberActive : styles.dayNumber}>{format(date, "d")}</Text>
             </View>
         </Pressable>
     )

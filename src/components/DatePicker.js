@@ -8,6 +8,7 @@ import {
     endOfMonth,
     endOfWeek,
     format,
+    isEqual,
     isSameMonth,
     startOfMonth,
     startOfWeek,
@@ -16,13 +17,14 @@ import {
 import DatePickerDate from './DatePickerDate';
 import { ArrowLeft, ArrowLeftSmall, ArrowRightSmall, Close } from './svg';
 import { Variables } from '../styles/theme';
+import convertFirebaseTimestampToDate from '../utils/convertFirebaseTimestampToDate';
 
-const DatePicker = ({ onSelectedDate }) => {
-    const [currentDate, setCurrentDate] = useState(new Date())
+const DatePicker = ({ onSelectedDate, selectedDate }) => {
+    const [currentDate, setCurrentDate] = useState(convertFirebaseTimestampToDate(selectedDate))
     const firstWeekStart = startOfWeek(startOfMonth(currentDate), { weekStartsOn: 1 });
     const lastWeekEnd = endOfWeek(endOfMonth(currentDate), { weekStartsOn: 1 });
     const currentMonthDays = eachDayOfInterval({ start: firstWeekStart, end: lastWeekEnd });
-
+    console.log(currentDate);
     const checkNumberOfWeeks = (days) => {
         const numOfWeeks = daysToWeeks(days.length);
 
@@ -50,6 +52,7 @@ const DatePicker = ({ onSelectedDate }) => {
     const renderItem = ({ item, index }) => {
 
         const isCurrentMonthDay = isSameMonth(item, currentDate);
+        const isSelected = isEqual(item, currentDate)
         return (
             <DatePickerDate
                 date={item}
@@ -57,6 +60,7 @@ const DatePicker = ({ onSelectedDate }) => {
                 index={index}
                 isCurrentMonthDay={isCurrentMonthDay}
                 onPress={onSelectedDate}
+                isSelected={isSelected}
             />
         );
     };

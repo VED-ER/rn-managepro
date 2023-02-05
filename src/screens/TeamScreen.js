@@ -1,5 +1,5 @@
 import { Alert, FlatList, StyleSheet, Text, View } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import InputPrimary from '../components/InputPrimary'
 import Screen from '../components/Screen'
 import PrimaryButton from '../components/PrimaryButton'
@@ -10,6 +10,7 @@ import { getUsers, searchUsers, updateProjectsCollection } from '../../firebase'
 import debounce from '../utils/debounce'
 import TeamItem from '../components/TeamItem'
 import { EDIT_PROJECT } from '../navigations/routes'
+import { GlobalContext } from '../store/GlobalContext'
 
 const TeamScreen = ({ navigation, route }) => {
     const [loading, setLoading] = useState(false)
@@ -20,6 +21,8 @@ const TeamScreen = ({ navigation, route }) => {
     const [searchResult, setSearchResult] = useState([])
     const [lastVisible, setLastVisible] = useState()
     const [loadMore, setLoadMore] = useState(true)
+
+    const { setUsersIds } = useContext(GlobalContext)
 
     useEffect(() => {
         if (route?.params?.project) {
@@ -124,6 +127,7 @@ const TeamScreen = ({ navigation, route }) => {
             navigation.goBack()
             return
         }
+        setUsersIds(prevIds => ([...new Set([...prevIds], [...team])]))
         navigation.navigate(EDIT_PROJECT, { team })
     }
     console.log(project?.team);
