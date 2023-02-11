@@ -24,6 +24,7 @@ import getImageColors from '../utils/getImageColors';
 import CachedImageBackground from '../components/CachedImageBackground';
 import { GlobalContext } from '../store/GlobalContext';
 import { EDIT_PROJECT } from '../navigations/routes';
+import AvatarList from '../components/AvatarList';
 
 const PROJECT_DETAILS_STAGES = [{ name: 'To Do' }, { name: 'In Progress' }, { name: 'Completed' }];
 
@@ -224,7 +225,7 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
                     ]}
                 >
                     <Avatar style={styles.projectOwnerAvatar} imageUri={route?.params?.createdBy ? route.params.createdBy?.photoURL : null} />
-                    <View style={styles.teamContainer}>
+                    {/* <View style={styles.teamContainer}>
                         {team?.map((user, index) => (<Avatar
                             imageUri={user?.photoURL}
                             key={index}
@@ -232,7 +233,8 @@ const ProjectDetailsScreen = ({ route, navigation }) => {
                             style={[styles.teamAvatarStyle, { marginLeft: index > 0 ? -5 : 0 }]}
                         />)
                         )}
-                    </View>
+                    </View> */}
+                    <AvatarList data={team?.map(user => (user?.photoURL))} />
                 </CachedImageBackground>
                 <View style={styles.projectDetailsContainer}>
                     <View>

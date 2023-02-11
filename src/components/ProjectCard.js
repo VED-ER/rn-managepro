@@ -6,6 +6,7 @@ import Avatar from './Avatar'
 import { format, formatDuration, intervalToDuration, parseISO } from 'date-fns'
 import convertFirebaseTimestampToDate from '../utils/convertFirebaseTimestampToDate'
 import CachedImageBackground from './CachedImageBackground'
+import AvatarList from './AvatarList'
 
 const ProjectCard = ({ project, team, style, onPress, createdBy }) => {
 
@@ -33,15 +34,7 @@ const ProjectCard = ({ project, team, style, onPress, createdBy }) => {
                 <View style={styles.projectIcon}>
                     <Avatar imageUri={createdBy?.photoURL} />
                 </View>
-                <View style={styles.teamContainer}>
-                    {team?.map((user, index) => (<Avatar
-                        imageUri={user?.photoURL}
-                        key={index}
-                        textStyle={{ fontSize: 10, color: Variables.colors.white }}
-                        style={[styles.teamContainerAvatar, { marginLeft: index > 0 ? -5 : 0 }]}
-                    />)
-                    )}
-                </View>
+                <AvatarList data={team?.map(user => (user?.photoURL))}/>
             </CachedImageBackground>
             <View style={styles.bottomContainer}>
                 <View>
